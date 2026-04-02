@@ -5,37 +5,62 @@ import { useCartStore } from '@/lib/store'
 import { supabase } from '@/lib/supabase'
 
 const MOCK_PRODUCTS = [
-  // CARNES
-  { id: 'c1', nombre: 'Lomo Salteado', precio: 22900, categoria: 'comida', sub: 'Carnes', destino: 'cocina', desc: 'Tiras de lomo salteadas al wok con cebollas, tomates y papas criollas, acompañado de arroz chaufa.', img_url: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069&auto=format&fit=crop' },
-  { id: 'c2', nombre: 'Bondiola de Cerdo', precio: 22900, categoria: 'comida', sub: 'Carnes', destino: 'cocina', desc: 'Con salsa de jengibre, panela y naranja. Acompañada de puré de papa sellado y vegetales salteados.', img_url: 'https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=2070&auto=format&fit=crop' },
-  { id: 'c3', nombre: 'Lomo Tamarindo', precio: 25900, categoria: 'comida', sub: 'Carnes', destino: 'cocina', desc: 'Medallones bañados en salsa de tamarindo, acompañados de papas criollas crujientes.', img_url: 'https://images.unsplash.com/photo-1558030006-450675393462?q=80&w=2000' },
-  { id: 'c4', nombre: 'Pollo Ajonjolí', precio: 19900, categoria: 'comida', sub: 'Carnes', destino: 'cocina', desc: 'Pechuga apanada en Panko bañada en miel de soya y servida con papas criollas tempura.', img_url: 'https://images.unsplash.com/photo-1606728035253-49e1961b980d?q=80&w=2000' },
-  { id: 'c5', nombre: 'Arroz Nikkei', precio: 22900, categoria: 'comida', sub: 'Carnes', destino: 'cocina', desc: 'Lomo salteado al wok con cebollas, tomates y papas criollas tempura sobre arroz chaufa.', img_url: 'https://images.unsplash.com/photo-1512058560366-cd242959b4fe?q=80&w=2000' },
-  { id: 'c6', nombre: 'Punta de Anca', precio: 29900, categoria: 'comida', sub: 'A la Parrilla', destino: 'cocina', desc: '300gr de Punta de Anca premium servida con papas rústicas y ensalada de la casa.', img_url: 'https://images.unsplash.com/photo-1546241072-48010ad2862c?q=80&w=2000' },
-  
+  // CARNES Y PARRILLA
+  { id: 'c1', nombre: 'Lomo Salteado', precio: 22900, categoria: 'carnes', destino: 'cocina', desc: 'Tiras de lomo salteadas al wok con cebollas, tomates y papas criollas, acompañado de arroz chaufa.', img_url: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2000' },
+  { id: 'c2', nombre: 'Bondiola de Cerdo', precio: 22900, categoria: 'carnes', destino: 'cocina', desc: 'Con salsa de jengibre, panela y naranja. Acompañada de puré de papa sellado y vegetales salteados.', img_url: 'https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=2000' },
+  { id: 'c3', nombre: 'Lomo Tamarindo', precio: 25900, categoria: 'carnes', destino: 'cocina', desc: 'Medallones bañados en salsa de tamarindo, acompañados de papas criollas crujientes y picadillo de mazorca.', img_url: 'https://images.unsplash.com/photo-1558030006-450675393462?q=80&w=2000' },
+  { id: 'c4', nombre: 'Pollo Ajonjolí', precio: 19900, categoria: 'carnes', destino: 'cocina', desc: 'Pechuga apanada en Panko bañada en miel de soya y servida con papas criollas tempura.', img_url: 'https://images.unsplash.com/photo-1606728035253-49e1961b980d?q=80&w=2000' },
+  { id: 'c5', nombre: 'Arroz Nikkei', precio: 22900, categoria: 'carnes', destino: 'cocina', desc: 'Lomo salteado al wok con cebollas, tomates y papas criollas tempura sobre arroz chaufa.', img_url: 'https://images.unsplash.com/photo-1512058560366-cd242959b4fe?q=80&w=2000' },
+  { id: 'c6', nombre: 'Punta de Anca', precio: 29900, categoria: 'carnes', destino: 'cocina', desc: 'A la parrilla 300gr. Acompañado de papas rústicas y ensalada.', img_url: 'https://images.unsplash.com/photo-1546241072-48010ad2862c?q=80&w=2000' },
+  { id: 'c7', nombre: 'Tapa de Cuadril', precio: 41900, categoria: 'carnes', destino: 'cocina', desc: 'Corte de Angus uruguayo a la parrilla 300gr.', img_url: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=2000' },
+  { id: 'c8', nombre: 'Asado de tira', precio: 39900, categoria: 'carnes', destino: 'cocina', desc: 'Corte de Angus uruguayo a la parrilla 300gr.', img_url: 'https://images.unsplash.com/photo-1628191081676-8f40d4ce6c44?q=80&w=2000' },
+
   // PESCADOS Y MARISCOS
-  { id: 'p1', nombre: 'Salmón a la Parrilla', precio: 25900, categoria: 'comida', sub: 'Pescados', destino: 'cocina', desc: 'Filete de salmón al término de su elección con aderezo asiático de limón y jengibre.', img_url: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=2000' },
-  { id: 'p2', nombre: 'Pescado Frito', precio: 25900, categoria: 'comida', sub: 'Pescados', destino: 'cocina', desc: 'Acompañado de arroz con coco, patacones de guineo, ensalada de aguacate y suero costeño.', img_url: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=2000' },
-  { id: 'p3', nombre: 'Arroz Caldoso', precio: 29900, categoria: 'comida', sub: 'Pescados', destino: 'cocina', desc: 'Mezcla de pescado, muelitas de cangrejo, calamar y camarón flameados en ron.', img_url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=2000' },
-  { id: 'p4', nombre: 'Encocado de Mariscos', precio: 29900, categoria: 'comida', sub: 'Pescados', destino: 'cocina', desc: 'Nuestra versión de una cazuela, acompañado de arroz con coco y patacones de guineo.', img_url: 'https://images.unsplash.com/photo-1534080564607-c987d6666f00?q=80&w=2000' },
-  
+  { id: 'p1', nombre: 'Salmón a la Parrilla', precio: 25900, categoria: 'pescados', destino: 'cocina', desc: 'Filete de salmón asado al término de su elección. Acompañado de papa rústica cajún y ensalada.', img_url: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=2000' },
+  { id: 'p2', nombre: 'Pescado Frito', precio: 25900, categoria: 'pescados', destino: 'cocina', desc: 'Acompañado de arroz con coco, patacones de guineo, ensalada de aguacate y suero costeño.', img_url: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=2000' },
+  { id: 'p3', nombre: 'Langostinos', precio: 29900, categoria: 'pescados', destino: 'cocina', desc: 'Bañados en salsa de coco y curry. Acompañados de arroz verde, espinaca salteada y crocantes de arroz.', img_url: 'https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?q=80&w=2000' },
+  { id: 'p4', nombre: 'Encocado de Mariscos', precio: 29900, categoria: 'pescados', destino: 'cocina', desc: 'Nuestra versión de una cazuela, acompañado de arroz con coco y patacones de guineo.', img_url: 'https://images.unsplash.com/photo-1534080564607-c987d6666f00?q=80&w=2000' },
+  { id: 'p5', nombre: 'Arroz Caldoso', precio: 29900, categoria: 'pescados', destino: 'cocina', desc: 'Mezcla de pescado, muelitas de cangrejo, calamar y camarón, flameados en ron.', img_url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=2000' },
+  { id: 'p6', nombre: 'Pescado Blanco Pesto-Thai', precio: 29900, categoria: 'pescados', destino: 'cocina', desc: 'Filete de pescado con salsa de pesto, chile y lulo, yucas fritas, camarones y naranja.', img_url: 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?q=80&w=2000' },
+  { id: 'p7', nombre: 'Pescado Blanco Costra de Yuca', precio: 26900, categoria: 'pescados', destino: 'cocina', desc: 'Servido sobre torta de plátano maduro, queso costeño y aguacate. Acompañado de pico de gallo.', img_url: 'https://images.unsplash.com/photo-1615361200141-f45040f367be?q=80&w=2000' },
+  { id: 'p8', nombre: 'Salmón', precio: 28900, categoria: 'pescados', destino: 'cocina', desc: 'Con suero y chimichurri de eneldo, servido sobre una arepa de chocolo y stew de chorizo.', img_url: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=2000' },
+
   // AL WOK Y OTROS
-  { id: 'w1', nombre: 'Pad Thai', precio: 24900, categoria: 'comida', sub: 'Wok', destino: 'cocina', desc: 'Pasta de arroz con pollo, camarones, calamares y nueces salteados al wok.', img_url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=2000' },
-  { id: 'w2', nombre: 'Aborrajado Darpapaya', precio: 24900, categoria: 'comida', sub: 'Especiales', destino: 'cocina', desc: 'Cubos de lomo salteado al wok, con miel de soya, sobre aborrajado relleno de queso crema.', img_url: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?q=80&w=2000' },
-  
+  { id: 'w1', nombre: 'Pad Thai', precio: 24900, categoria: 'wok', destino: 'cocina', desc: 'Pasta de arroz con pollo, camarones, calamares y nueces salteados al wok con salsa de tamarindo.', img_url: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?q=80&w=2000' },
+  { id: 'w2', nombre: 'Menú de Niños', precio: 13900, categoria: 'wok', destino: 'cocina', desc: 'Dedos de pechuga apanados en panko, miel y papas criollas tempura.', img_url: 'https://images.unsplash.com/photo-1562967914-01efa7e87832?q=80&w=2000' },
+  { id: 'w3', nombre: 'Aborrajado Darpapaya', precio: 24900, categoria: 'wok', destino: 'cocina', desc: 'Cubos de lomo salteado al wok, con miel de soya, sobre aborrajado relleno de queso crema.', img_url: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?q=80&w=2000' },
+  { id: 'w4', nombre: 'Cazuela Darpapaya', precio: 24900, categoria: 'wok', destino: 'cocina', desc: 'Cazuela de frijoles con chorizo, mazorca y hogao. Resguardada de arroz blanco, maduros, aguacate y chicharrón.', img_url: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=2000' },
+
   // ENTRADAS
-  { id: 'e1', nombre: 'Carpaccio de Chorizo', precio: 9900, categoria: 'comida', sub: 'Entradas', destino: 'cocina', desc: 'Acompañado de chimichurri de tomates secos y pico de gallo con mango.', img_url: 'https://images.unsplash.com/photo-1541529086526-db283c563270?q=80&w=2000' },
-  { id: 'e2', nombre: 'Costillas de Cerdo', precio: 12900, categoria: 'comida', sub: 'Entradas', destino: 'cocina', desc: 'Cocinadas y salteadas al wok bañadas en salsa dulce y sus propios jugos.', img_url: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069' },
-  { id: 'e3', nombre: 'Chicharrón Enroscado', precio: 12900, categoria: 'comida', sub: 'Entradas', destino: 'cocina', desc: 'Acompañado de piña salteada y salsa de jengibre, miso y cilantro.', img_url: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?q=80&w=2014' },
+  { id: 'e1', nombre: 'Carpaccio de Chorizo', precio: 9900, categoria: 'entradas', destino: 'cocina', desc: 'Acompañado de chimichurri de tomates secos y pico de gallo con mango.', img_url: 'https://images.unsplash.com/photo-1541529086526-db283c563270?q=80&w=2000' },
+  { id: 'e2', nombre: 'Costillas de Cerdo', precio: 12900, categoria: 'entradas', destino: 'cocina', desc: 'Cocinadas y salteadas al wok bañadas en salsa dulce y sus propios jugos.', img_url: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069' },
+  { id: 'e3', nombre: 'Albóndigas de Pescado', precio: 12900, categoria: 'entradas', destino: 'cocina', desc: 'Bolitas de pescado y curry apanadas en panko con salsa de maní picante.', img_url: 'https://images.unsplash.com/photo-1529042410759-befb1204b468?q=80&w=2000' },
+  { id: 'e4', nombre: 'Bombones de Pollo', precio: 10500, categoria: 'entradas', destino: 'cocina', desc: 'Apanados en panko, con salsa de chile y lulo, suero costeño y chipotle.', img_url: 'https://images.unsplash.com/photo-1562967914-01efa7e87832?q=80&w=2000' },
+  { id: 'e5', nombre: 'Chicharrón Enroscado', precio: 12900, categoria: 'entradas', destino: 'cocina', desc: 'Acompañado de piña salteada y salsa de jengibre, miso y cilantro.', img_url: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?q=80&w=2014' },
+  { id: 'e6', nombre: 'Mazorcas Dulces', precio: 8900, categoria: 'entradas', destino: 'cocina', desc: 'Con salsa de suero con chipotle y queso costeño rayado.', img_url: 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=2000' },
+  { id: 'e7', nombre: 'Camarones Glaceados', precio: 14900, categoria: 'entradas', destino: 'cocina', desc: 'Con salsa dulce de azafrán, servidos en corona de plátano y lechuga con misso y jengibre.', img_url: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=2000' },
   
+  // CEVICHES & TIRADITOS
+  { id: 'v1', nombre: 'Ceviche Del Chef', precio: 13900, categoria: 'ceviches', destino: 'cocina', desc: 'Cebollas dulce curada, aguacate, limón, mango pintón, aceite de oliva y cilantro.', img_url: 'https://images.unsplash.com/photo-1535359051834-6e11894a8990?q=80&w=2000' },
+  { id: 'v2', nombre: 'Ceviche Mexicano', precio: 13900, categoria: 'ceviches', destino: 'cocina', desc: 'Puré de tomates asados, cebolla blanca, aguacate, limón, cilantro y chipotle.', img_url: 'https://images.unsplash.com/photo-1535359051834-6e11894a8990?q=80&w=2000' },
+  { id: 'v3', nombre: 'Ceviche Nikkei', precio: 13900, categoria: 'ceviches', destino: 'cocina', desc: 'Cebolla roja, jengibre, salsa nikkei, limón, cilantro y ajonjolí.', img_url: 'https://images.unsplash.com/photo-1535359051834-6e11894a8990?q=80&w=2000' },
+  { id: 'v4', nombre: 'Ceviche Caribeño', precio: 13900, categoria: 'ceviches', destino: 'cocina', desc: 'Suero costeño, platanitos maduros, chorizo frito, cebolla curada y limón.', img_url: 'https://images.unsplash.com/photo-1535359051834-6e11894a8990?q=80&w=2000' },
+  { id: 't1', nombre: 'Tiradito Ají Amarillo', precio: 10900, categoria: 'ceviches', destino: 'cocina', desc: 'Tiras de pescado bañadas en salsa suave de ají amarillo y cilantro.', img_url: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=2000' },
+  { id: 't2', nombre: 'Tiradito Wasabi', precio: 10900, categoria: 'ceviches', destino: 'cocina', desc: 'Tiras de pescado o salmón con mayonesa y crocantes de wasabi.', img_url: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=2000' },
+
+  // ENSALADAS Y SOPAS
+  { id: 's1', nombre: 'Ensalada Quínua', precio: 22900, categoria: 'sopas', destino: 'cocina', desc: 'Limón, hierbabuena, manzana, tomate y aceite de oliva. Pídalo con pollo a la parrilla.', img_url: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2000' },
+  { id: 's3', nombre: 'Sopa Mexicana', precio: 16900, categoria: 'sopas', destino: 'cocina', desc: 'Con tomates rostizados, aguacate, queso en cubos, pollo desmechado y cilantro.', img_url: 'https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=2000' },
+  { id: 's4', nombre: 'Sopa de Mariscos', precio: 27900, categoria: 'sopas', destino: 'cocina', desc: 'Mezcla de pescado, camarón, calamar y muelitas de cangrejo con toque de ron.', img_url: 'https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=2000' },
+
   // BEBIDAS
-  { id: 'b1', nombre: 'Cerveza Club Colombia', precio: 8500, categoria: 'bebida', destino: 'bar', desc: 'Rubia, Roja o Negra.', img_url: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?q=80&w=2070' },
-  { id: 'b2', nombre: 'Jugo Natural', precio: 9000, categoria: 'bebida', destino: 'bar', desc: 'Limonada o Mandarina fresca.', img_url: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?q=80&w=2072' },
+  { id: 'b1', nombre: 'Cerveza Club Colombia', precio: 8500, categoria: 'bebidas', destino: 'bar', desc: 'Rubia, Roja o Negra.', img_url: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?q=80&w=2070' },
+  { id: 'b2', nombre: 'Jugo Natural', precio: 9000, categoria: 'bebidas', destino: 'bar', desc: 'Limonada o Mandarina fresca.', img_url: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?q=80&w=2072' },
 ]
 
 export default function MenuPage({ params }: { params: { mesa_id: string } }) {
   const { addItem, items, total, clearCart } = useCartStore()
-  const [activeTab, setActiveTab] = useState<'comida' | 'bebida'>('comida')
+  const [activeTab, setActiveTab] = useState<string>('carnes')
   const [selectedTerm, setSelectedTerm] = useState<Record<string, string>>({})
   const [showSuccess, setShowSuccess] = useState<string | null>(null)
   const [isOrdering, setIsOrdering] = useState(false)
@@ -58,7 +83,7 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
   [activeTab])
 
   const handleAddToCart = (product: any) => {
-    const term = product.categoria === 'comida' ? (selectedTerm[product.id] || '3/4') : undefined
+    const term = ['carnes', 'pescados'].includes(product.categoria) ? (selectedTerm[product.id] || '3/4') : undefined
     const extraNotes = window.prompt(`¿Alguna nota especial para ${product.nombre}? (Ej: sin sal, sin salsa)`, '')
     
     let nombreFinal = product.nombre
@@ -210,22 +235,29 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
         </div>
       </header>
 
-      {/* CATEGORÍAS - ESTILO PREMIUM */}
-      <div style={{ position: 'sticky', top: '67px', zIndex: 90, backgroundColor: BRAND.black, padding: '15px 20px', display: 'flex', gap: '12px' }}>
-        <button 
-          onClick={() => setActiveTab('comida')}
-          style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', cursor: 'pointer', fontWeight: '900', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', transition: 'all 0.3s', backgroundColor: activeTab === 'comida' ? BRAND.orange : BRAND.darkGray, color: BRAND.white, boxShadow: activeTab === 'comida' ? `0 8px 20px ${BRAND.orange}40` : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-          className="btn-active"
-        >
-          <UtensilsCrossed size={16} /> Parrilla
-        </button>
-        <button 
-          onClick={() => setActiveTab('bebida')}
-          style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', cursor: 'pointer', fontWeight: '900', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', transition: 'all 0.3s', backgroundColor: activeTab === 'bebida' ? BRAND.gold : BRAND.darkGray, color: activeTab === 'bebida' ? BRAND.black : BRAND.white, boxShadow: activeTab === 'bebida' ? `0 8px 20px ${BRAND.gold}40` : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-          className="btn-active"
-        >
-          <Beer size={16} /> Bebidas
-        </button>
+      {/* CATEGORÍAS - ESTILO PREMIUM (NUEVA BARRA SCROLLABLE) */}
+      <div style={{ position: 'sticky', top: '67px', zIndex: 90, backgroundColor: BRAND.black, padding: '15px 20px', display: 'flex', gap: '12px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
+        <style dangerouslySetInnerHTML={{ __html: `
+           div::-webkit-scrollbar { display: none; }
+        `}} />
+        {[
+          { id: 'carnes', label: 'Carnes', icon: <UtensilsCrossed size={16} /> },
+          { id: 'pescados', label: 'Pescados', icon: <UtensilsCrossed size={16} /> },
+          { id: 'ceviches', label: 'Ceviches', icon: <UtensilsCrossed size={16} /> },
+          { id: 'entradas', label: 'Entradas', icon: <UtensilsCrossed size={16} /> },
+          { id: 'sopas', label: 'Sopas & Ens', icon: <UtensilsCrossed size={16} /> },
+          { id: 'wok', label: 'Wok', icon: <UtensilsCrossed size={16} /> },
+          { id: 'bebidas', label: 'Bebidas', icon: <Beer size={16} /> }
+        ].map(cat => (
+          <button 
+            key={cat.id}
+            onClick={() => setActiveTab(cat.id)}
+            style={{ flexShrink: 0, padding: '12px 20px', borderRadius: '20px', border: 'none', cursor: 'pointer', fontWeight: '900', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', transition: 'all 0.3s', backgroundColor: activeTab === cat.id ? BRAND.orange : BRAND.darkGray, color: activeTab === cat.id ? BRAND.white : 'rgba(255,255,255,0.6)', boxShadow: activeTab === cat.id ? `0 8px 20px ${BRAND.orange}40` : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            className="btn-active"
+          >
+            {cat.icon} {cat.label}
+          </button>
+        ))}
       </div>
 
       <main style={{ paddingBottom: '120px' }}>
@@ -233,8 +265,8 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
           {filteredProducts.map((product) => (
             <div key={product.id} className="premium-shadow" style={{ backgroundColor: BRAND.darkGray, borderRadius: '24px', overflow: 'hidden', border: `1px solid ${BRAND.lightGray}`, display: 'flex', flexDirection: 'column' }}>
               
-              {/* IMAGEN OPTIMIZADA */}
-              <div style={{ width: '100%', height: '180px', position: 'relative', background: '#000' }}>
+              {/* IMAGEN OPTIMIZADA Y RESPONSIVE */}
+              <div style={{ width: '100%', aspectRatio: '4/3', position: 'relative', background: '#000' }}>
                 <img 
                   src={product.img_url} 
                   alt={product.nombre} 
@@ -258,7 +290,7 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
                 </div>
                 
                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                  {product.categoria === 'comida' && (
+                  {['carnes', 'pescados'].includes(product.categoria) && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <p style={{ margin: 0, fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', color: BRAND.gold, letterSpacing: '1px' }}>Término Sugerido</p>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>

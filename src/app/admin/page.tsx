@@ -252,9 +252,9 @@ export default function AdminPage() {
                    <div style={{ position: 'absolute', top: 0, right: 0, backgroundColor: BRAND.orange, padding: '4px 12px', borderRadius: '0 0 0 15px' }}>
                       <span style={{ fontSize: '9px', fontWeight: '900', color: BRAND.white }}>RECOMENDADO</span>
                    </div>
-                   <div style={{ backgroundColor: 'white', padding: '8px', borderRadius: '12px', width: '70px', height: '70px' }}>
+                   <div style={{ backgroundColor: 'white', padding: '8px', borderRadius: '12px', width: '80px', height: '80px' }}>
                       <img 
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${baseUrl}/menu`} 
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(baseUrl + '/menu')}`} 
                         alt="QR Genérico"
                         style={{ width: '100%', height: '100%' }}
                       />
@@ -283,9 +283,9 @@ export default function AdminPage() {
                         <p style={{ margin: 0, fontSize: '10px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase' }}>Zona A</p>
                         <p style={{ margin: 0, fontSize: '22px', fontWeight: '900', color: BRAND.white }}>Mesa {t}</p>
                       </div>
-                      <div style={{ width: '80px', height: '80px', backgroundColor: 'white', borderRadius: '12px', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px rgba(0,0,0,0.3)' }}>
+                      <div style={{ width: '100px', height: '100px', backgroundColor: 'white', borderRadius: '15px', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px rgba(0,0,0,0.3)' }}>
                         <img 
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${baseUrl}/menu/${t}`} 
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(baseUrl + '/menu/' + t)}`} 
                           alt={`QR Mesa ${t}`}
                           style={{ width: '100%', height: '100%' }}
                         />
