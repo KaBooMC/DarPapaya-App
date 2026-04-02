@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 15, 15, 15;
+  --background-end-rgb: 15, 15, 15;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Hard reset for images to ensure they never blow up */
+.img-container {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 1rem !important;
+  flex-shrink: 0 !important;
+  background: #1a1a1a;
+}
+
+.img-container img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* Custom classes for the "Premium Rústico" look */
+.darpapaya-gradient {
+  background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+}
+
+.darpapaya-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.darpapaya-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(217, 119, 6, 0.3);
+  transform: translateY(-2px);
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
