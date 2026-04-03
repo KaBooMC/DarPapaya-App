@@ -19,11 +19,30 @@ export default function CocinaPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [sessionStarted, setSessionStarted] = useState(false)
+  const [flashScreen, setFlashScreen] = useState(false)
 
   const playAlertSound = () => {
     if (!sessionStarted) return;
+    
+    // 1. Efecto Visual: Parpadeo Rojo de Pantalla
+    setFlashScreen(true)
+    setTimeout(() => setFlashScreen(false), 3000)
+
+    // 2. Vibrador Físico (Funciona en Android/Móviles)
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate([400, 200, 400, 200, 1000]); 
+    }
+
+    // 3. Voz Robótica del Dispositivo (Habla)
+    try {
+      const msg = new SpeechSynthesisUtterance('Nueva orden en cocina');
+      window.speechSynthesis.speak(msg);
+    } catch(e) {}
+
+    // 4. Timbre (AudioContext mejorado)
     try {
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioCtx.resume();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
       
@@ -131,7 +150,7 @@ export default function CocinaPage() {
   }
 
   return (
-    <div style={{ backgroundColor: BRAND.black, minHeight: '100vh', color: BRAND.white, fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
+    <div style={{ backgroundColor: flashScreen ? '#991B1B' : BRAND.black, transition: 'background-color 0.3s ease', minHeight: '100vh', color: BRAND.white, fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
       
       <style dangerouslySetInnerHTML={{ __html: `
         .order-grid {

@@ -18,11 +18,30 @@ export default function BarPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [sessionStarted, setSessionStarted] = useState(false)
+  const [flashScreen, setFlashScreen] = useState(false)
 
   const playAlertSound = () => {
     if (!sessionStarted) return;
+
+    // 1. Efecto Visual: Parpadeo Azul de Pantalla
+    setFlashScreen(true)
+    setTimeout(() => setFlashScreen(false), 3000)
+
+    // 2. Vibrador
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate([200, 100, 200, 100, 800]); 
+    }
+
+    // 3. Voz Robótica
+    try {
+      const msg = new SpeechSynthesisUtterance('Nuevo pedido en bar');
+      window.speechSynthesis.speak(msg);
+    } catch(e) {}
+
+    // 4. Timbre (AudioContext)
     try {
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioCtx.resume();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
       
@@ -116,7 +135,7 @@ export default function BarPage() {
   }
 
   return (
-    <div style={{ backgroundColor: BRAND.black, minHeight: '100vh', color: BRAND.white, fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
+    <div style={{ backgroundColor: flashScreen ? '#1E3A8A' : BRAND.black, transition: 'background-color 0.3s ease', minHeight: '100vh', color: BRAND.white, fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
       
       <style dangerouslySetInnerHTML={{ __html: `
         .order-grid {
