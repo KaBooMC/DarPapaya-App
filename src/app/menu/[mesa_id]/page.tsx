@@ -68,6 +68,8 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
   const [showSuccess, setShowSuccess] = useState<string | null>(null)
   const [isOrdering, setIsOrdering] = useState(false)
   const [orderSent, setOrderSent] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null)
+  const [customNote, setCustomNote] = useState<string>('')
 
   // Colores de la Marca Darpapaya (Extraídos del Logo)
   const BRAND = {
@@ -86,17 +88,23 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
   [activeTab])
 
   const handleAddToCart = (product: any) => {
-    const term = ['carnes', 'pescados'].includes(product.categoria) ? (selectedTerm[product.id] || '3/4') : undefined
-    const extraNotes = window.prompt(`¿Alguna nota especial para ${product.nombre}? (Ej: sin sal, sin salsa)`, '')
+    setSelectedProduct(product)
+    setCustomNote('')
+  }
+
+  const confirmAddToCart = () => {
+    if (!selectedProduct) return
+    const term = ['carnes', 'pescados'].includes(selectedProduct.categoria) ? (selectedTerm[selectedProduct.id] || '3/4') : undefined
     
-    let nombreFinal = product.nombre
-    if (extraNotes && extraNotes.trim() !== '') {
-      nombreFinal = `${product.nombre} (${extraNotes.trim()})`
+    let nombreFinal = selectedProduct.nombre
+    if (customNote && customNote.trim() !== '') {
+      nombreFinal = `${selectedProduct.nombre} (${customNote.trim()})`
     }
     
-    addItem({ ...product, nombre: nombreFinal, cantidad: 1, termino: term })
-    setShowSuccess(product.nombre)
+    addItem({ ...selectedProduct, nombre: nombreFinal, cantidad: 1, termino: term })
+    setShowSuccess(selectedProduct.nombre)
     setTimeout(() => setShowSuccess(null), 3000)
+    setSelectedProduct(null)
   }
 
   const handleSendOrder = async () => {
@@ -178,7 +186,67 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
         .premium-shadow { box-shadow: 0 10px 30px -5px rgba(0,0,0,0.5); }
         .glass-effect { backdrop-filter: blur(10px); background: rgba(26, 26, 26, 0.8); border: 1px solid rgba(255,255,255,0.05); }
         @keyframes slideIn { from { transform: translate(-50%, -100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
       `}} />
+
+      {/* MODAL DE OPCIONES Y NOTAS (NUEVO) */}
+      {selectedProduct && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 30000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(15px)' }}>
+          <div style={{ backgroundColor: BRAND.darkGray, width: '100%', maxWidth: '400px', borderRadius: '35px', padding: '30px', border: `1px solid ${BRAND.orange}40`, animation: 'popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: '900', margin: '0 0 5px 0', color: BRAND.white }}>{selectedProduct.nombre}</h2>
+            <p style={{ color: 'rgba(255,255,255,0.5)', margin: '0 0 25px 0', fontSize: '13px' }}>¿Deseas personalizar tu pedido?</p>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
+              {(selectedProduct.categoria === 'bebidas' 
+                ? ['Sin azúcar', 'Mitad de azúcar', 'Sin hielo', 'Poco hielo']
+                : ['Sin sal', 'Salsas aparte', 'Sin picante', 'Cubiertos']
+              ).map(opt => (
+                <button 
+                  key={opt}
+                  onClick={() => setCustomNote(prev => prev === opt ? '' : opt)}
+                  style={{
+                    backgroundColor: customNote === opt ? BRAND.orange : 'rgba(255,255,255,0.05)',
+                    color: customNote === opt ? 'white' : 'rgba(255,255,255,0.7)',
+                    border: `1px solid ${customNote === opt ? BRAND.orange : 'rgba(255,255,255,0.1)'}`,
+                    padding: '12px',
+                    borderRadius: '15px',
+                    fontWeight: '600',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    boxShadow: customNote === opt ? `0 4px 15px ${BRAND.orange}40` : 'none'
+                  }}
+                  className="btn-active"
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+
+            <input 
+              placeholder="Otras instrucciones (ej. bien frito)..."
+              value={customNote}
+              onChange={(e) => setCustomNote(e.target.value)}
+              style={{ width: '100%', boxSizing: 'border-box', padding: '16px', borderRadius: '15px', backgroundColor: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', marginBottom: '25px', outline: 'none', fontSize: '14px' }}
+            />
+
+            <div style={{ display: 'flex', gap: '15px' }}>
+              <button 
+                onClick={() => setSelectedProduct(null)} 
+                style={{ flex: 1, padding: '15px', borderRadius: '20px', backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'white', fontWeight: '900', cursor: 'pointer' }}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={() => confirmAddToCart()} 
+                style={{ flex: 1, padding: '15px', borderRadius: '20px', backgroundColor: BRAND.success, border: 'none', color: 'white', fontWeight: '900', cursor: 'pointer', boxShadow: `0 4px 15px ${BRAND.success}40` }}
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MENSAJE DE ÉXITO AL AGREGAR AL CARRITO */}
       {showSuccess && (

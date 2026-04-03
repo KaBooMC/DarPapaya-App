@@ -18,6 +18,31 @@ const BRAND = {
 export default function CocinaPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [sessionStarted, setSessionStarted] = useState(false)
+
+  const playAlertSound = () => {
+    if (!sessionStarted) return;
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
+      oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.5);
+      
+      gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 1);
+    } catch (e) {
+      console.error('Audio error:', e);
+    }
+  }
 
   // Cargar pedidos iniciales y escuchar Realtime
   useEffect(() => {
@@ -34,9 +59,13 @@ export default function CocinaPage() {
       if (error) {
         console.error('Error fetching orders:', error)
       } else {
-        // Filtrar solo los que van a cocina
-        const BAR_ITEMS = ['Cerveza Club Colombia', 'Jugo Natural']
-        setOrders((data || []).filter(o => !BAR_ITEMS.includes(o.notas)))
+        // Filtrar solo los que van a cocina (ignorando bebidas incluso si traen notas extra)
+        const isBarItem = (notas: string) => {
+          if (!notas) return false;
+          const lower = notas.toLowerCase();
+          return lower.includes('cerveza') || lower.includes('jugo') || lower.includes('limonada') || lower.includes('mandarina') || lower.includes('bebida');
+        }
+        setOrders((data || []).filter(o => !isBarItem(o.notas)))
       }
       setLoading(false)
     }
@@ -48,6 +77,7 @@ export default function CocinaPage() {
       .channel('cocina_changes')
       // @ts-ignore
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedido_items' }, (payload: any) => {
+        playAlertSound() // Suena la campana
         fetchOrders() // Recargar al recibir nuevo item
       })
       // @ts-ignore
@@ -70,6 +100,26 @@ export default function CocinaPage() {
     if (error) {
       console.error('Error despachando:', error)
     }
+  }
+
+  if (!sessionStarted) {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: BRAND.black, display: 'flex', alignItems: 'center', justifyContent: 'center', color: BRAND.white, padding: '20px' }}>
+         <div style={{ textAlign: 'center', backgroundColor: BRAND.darkGray, padding: '50px 30px', borderRadius: '30px', border: `1px solid ${BRAND.orange}40`, maxWidth: '400px' }}>
+            <ChefHat size={60} color={BRAND.orange} style={{ marginBottom: '20px' }} />
+            <h1 style={{ fontSize: '28px', fontWeight: '900', marginBottom: '10px' }}>CENTRAL COCINA</h1>
+            <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '30px', lineHeight: 1.5 }}>
+              Para que la campana de pedidos suene correctamente, debes iniciar el turno.
+            </p>
+            <button 
+              onClick={() => setSessionStarted(true)}
+              style={{ backgroundColor: BRAND.orange, color: BRAND.white, border: 'none', padding: '15px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase', width: '100%' }}
+            >
+              Empezar Turno
+            </button>
+         </div>
+      </div>
+    )
   }
 
   if (loading) {

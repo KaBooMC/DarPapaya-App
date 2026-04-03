@@ -17,6 +17,31 @@ const BRAND = {
 export default function BarPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [sessionStarted, setSessionStarted] = useState(false)
+
+  const playAlertSound = () => {
+    if (!sessionStarted) return;
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime); // C6 (agudo para bar)
+      oscillator.frequency.exponentialRampToValueAtTime(523.25, audioCtx.currentTime + 0.3);
+      
+      gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.8);
+    } catch (e) {
+      console.error('Audio error:', e);
+    }
+  }
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -32,8 +57,12 @@ export default function BarPage() {
       if (error) {
         console.error('Error fetching bar orders:', error)
       } else {
-        const BAR_ITEMS = ['Cerveza Club Colombia', 'Jugo Natural']
-        setOrders((data || []).filter(o => BAR_ITEMS.includes(o.notas)))
+        const isBarItem = (notas: string) => {
+          if (!notas) return false;
+          const lower = notas.toLowerCase();
+          return lower.includes('cerveza') || lower.includes('jugo') || lower.includes('limonada') || lower.includes('mandarina') || lower.includes('bebida');
+        }
+        setOrders((data || []).filter(o => isBarItem(o.notas)))
       }
       setLoading(false)
     }
@@ -43,7 +72,12 @@ export default function BarPage() {
     const channel = supabase
       .channel('bar_changes')
       // @ts-ignore
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedido_items' }, fetchOrders)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedido_items' }, (payload) => {
+        playAlertSound()
+        fetchOrders()
+      })
+      // @ts-ignore
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedido_items' }, fetchOrders)
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }
@@ -51,6 +85,26 @@ export default function BarPage() {
 
   const handleDespachar = async (id: string) => {
     await supabase.from('pedido_items').update({ estado: 'listo' }).eq('id', id)
+  }
+
+  if (!sessionStarted) {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: BRAND.black, display: 'flex', alignItems: 'center', justifyContent: 'center', color: BRAND.white, padding: '20px' }}>
+         <div style={{ textAlign: 'center', backgroundColor: BRAND.darkGray, padding: '50px 30px', borderRadius: '30px', border: `1px solid ${BRAND.blue}40`, maxWidth: '400px' }}>
+            <Beer size={60} color={BRAND.blue} style={{ marginBottom: '20px' }} />
+            <h1 style={{ fontSize: '28px', fontWeight: '900', marginBottom: '10px' }}>BAR DARPAPAYA</h1>
+            <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '30px', lineHeight: 1.5 }}>
+              Para que la campana de pedidos suene correctamente, debes iniciar el turno.
+            </p>
+            <button 
+              onClick={() => setSessionStarted(true)}
+              style={{ backgroundColor: BRAND.blue, color: BRAND.white, border: 'none', padding: '15px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase', width: '100%' }}
+            >
+              Empezar Turno
+            </button>
+         </div>
+      </div>
+    )
   }
 
   if (loading) {
