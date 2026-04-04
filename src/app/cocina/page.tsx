@@ -3,17 +3,7 @@ import { ChefHat, CheckCircle2, AlertTriangle, Timer, Clock, Utensils, ArrowLeft
 import Link from 'next/link'
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
-
-const BRAND = {
-  orange: '#D97706',
-  gold: '#FDE047',
-  black: '#0F0F0F',
-  darkGray: '#1A1A1A',
-  lightGray: '#2A2A2A',
-  red: '#991B1B',
-  white: '#FFFFFF',
-  success: '#10B981'
-}
+import { BRAND, MOCK_PRODUCTS } from '@/lib/constants'
 
 export default function CocinaPage() {
   const [orders, setOrders] = useState<any[]>([])

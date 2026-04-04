@@ -4,16 +4,7 @@ import { LayoutDashboard, Search, CheckCircle2, QrCode, CreditCard, Users, Setti
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
-const BRAND = {
-  orange: '#D97706',
-  gold: '#FDE047',
-  black: '#0F0F0F',
-  darkGray: '#1A1A1A',
-  lightGray: '#2A2A2A',
-  red: '#991B1B',
-  white: '#FFFFFF',
-  success: '#10B981'
-}
+import { BRAND, MOCK_PRODUCTS } from '@/lib/constants'
 
 export default function AdminPage() {
   const [activeTable, setActiveTable] = useState<number | null>(null)
@@ -28,6 +19,10 @@ export default function AdminPage() {
   const [pinInput, setPinInput] = useState('')
   const [realSalesToday, setRealSalesToday] = useState(0)
   const [pinError, setPinError] = useState(false)
+  const [showManualModal, setShowManualModal] = useState(false)
+  const [manualQty, setManualQty] = useState(1)
+  const [selectedManualProd, setSelectedManualProd] = useState<any>(null)
+  const [nequiPhone, setNequiPhone] = useState('3210000000') // Número por defecto
   const tables = Array.from({ length: 20 }, (_, i) => i + 1)
 
   // Cargar mesas ocupadas en tiempo real
@@ -106,6 +101,55 @@ export default function AdminPage() {
     } else {
       setPinError(true)
       setPinInput('')
+    }
+  }
+
+  const handleAddManualItem = async () => {
+    if (!selectedManualProd || !activeTable) return
+
+    try {
+      // 1. Buscar o Crear el Pedido
+      let pedidoId: number;
+      const { data: existingPedido } = await supabase
+        .from('pedidos')
+        .select('id, total')
+        .eq('mesa_id', activeTable)
+        .eq('estado_pago', 'pendiente')
+        .single()
+
+      if (existingPedido) {
+        pedidoId = existingPedido.id
+      } else {
+        const { data: newPedido, error: pError } = await supabase
+          .from('pedidos')
+          .insert([{ mesa_id: activeTable, total: 0, estado_pago: 'pendiente' }])
+          .select().single()
+        if (pError) throw pError
+        pedidoId = newPedido.id
+      }
+
+      // 2. Insertar el Item
+      const { error: iError } = await supabase
+        .from('pedido_items')
+        .insert([{
+          pedido_id: pedidoId,
+          cantidad: manualQty,
+          notas: selectedManualProd.nombre,
+          estado: 'pendiente'
+        }])
+      if (iError) throw iError
+
+      // 3. Actualizar el Total
+      const nuevoTotal = (existingPedido?.total || 0) + (selectedManualProd.precio * manualQty)
+      await supabase.from('pedidos').update({ total: nuevoTotal }).eq('id', pedidoId)
+
+      // 4. Reset
+      setShowManualModal(false)
+      setSelectedManualProd(null)
+      setManualQty(1)
+    } catch (err) {
+      console.error("Error manual order:", err)
+      alert("Error al agregar pedido manual")
     }
   }
 
@@ -235,14 +279,14 @@ export default function AdminPage() {
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom: '40px' }}>
                 <div style={{ backgroundColor: BRAND.black, padding: '25px', borderRadius: '25px', border: `1px solid ${BRAND.lightGray}` }}>
-                  <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '12px' }}>URL del Restaurante (Netlify)</label>
+                  <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '12px' }}>Número de Nequi oficial</label>
                   <div style={{ position: 'relative' }}>
                     <input 
                       type="text" 
-                      value={baseUrl} 
-                      onChange={(e) => setBaseUrl(e.target.value)}
+                      value={nequiPhone} 
+                      onChange={(e) => setNequiPhone(e.target.value)}
                       style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${BRAND.lightGray}`, padding: '18px 20px', borderRadius: '15px', color: 'white', fontSize: '14px', outline: 'none', transition: 'all 0.3s' }}
-                      placeholder="https://darpapaya.netlify.app"
+                      placeholder="3210000000"
                     />
                     <div style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', backgroundColor: BRAND.orange, width: '8px', height: '8px', borderRadius: '50%', boxShadow: `0 0 10px ${BRAND.orange}` }} />
                   </div>
@@ -406,6 +450,16 @@ export default function AdminPage() {
             </div>
 
             <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <p style={{ margin: 0, fontSize: '11px', fontWeight: '900', color: BRAND.white, textTransform: 'uppercase' }}>Items de la Mesa</p>
+                <button 
+                  onClick={() => setShowManualModal(true)}
+                  style={{ backgroundColor: BRAND.orange + '20', border: `1px solid ${BRAND.orange}`, color: BRAND.orange, padding: '6px 12px', borderRadius: '10px', fontSize: '10px', fontWeight: '900', cursor: 'pointer' }}
+                >
+                  + AGREGAR CUENTA FISICA
+                </button>
+              </div>
+
               {occupiedTables.has(activeTable) ? (
                 tableOrders[activeTable]?.map((item: any, i: number) => (
                   <div key={i} style={{ backgroundColor: BRAND.black, padding: '15px 20px', borderRadius: '20px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -424,6 +478,50 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+
+            {/* MODAL MANUAL DE PEDIDO */}
+            {showManualModal && (
+              <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(15,15,15,0.98)', backdropFilter: 'blur(10px)', borderRadius: '40px', zIndex: 1100, padding: '40px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <h3 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: BRAND.orange }}>Agregar Ítem Manual</h3>
+                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>Selecciona el producto que el cliente pidió mediante la carta física.</p>
+                
+                <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                   {MOCK_PRODUCTS.map(p => (
+                     <button 
+                      key={p.id}
+                      onClick={() => setSelectedManualProd(p)}
+                      style={{ 
+                        width: '100%', textAlign: 'left', padding: '15px', borderRadius: '15px', 
+                        backgroundColor: selectedManualProd?.id === p.id ? BRAND.orange + '20' : BRAND.black, 
+                        border: `1px solid ${selectedManualProd?.id === p.id ? BRAND.orange : BRAND.lightGray}`,
+                        color: BRAND.white, cursor: 'pointer'
+                      }}
+                     >
+                        <p style={{ margin: 0, fontWeight: '900', fontSize: '14px' }}>{p.nombre}</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: BRAND.gold }}>${p.precio.toLocaleString()}</p>
+                     </button>
+                   ))}
+                </div>
+
+                {selectedManualProd && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', backgroundColor: BRAND.black, borderRadius: '15px', border: `1px solid ${BRAND.lightGray}` }}>
+                    <span style={{ fontSize: '12px', fontWeight: '900' }}>CANTIDAD:</span>
+                    <button onClick={() => setManualQty(Math.max(1, manualQty-1))} style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: BRAND.lightGray, color: 'white', border: 'none' }}>-</button>
+                    <span style={{ fontSize: '18px', fontWeight: '900', color: BRAND.orange }}>{manualQty}</span>
+                    <button onClick={() => setManualQty(manualQty+1)} style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: BRAND.lightGray, color: 'white', border: 'none' }}>+</button>
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button onClick={() => { setShowManualModal(false); setSelectedManualProd(null); }} style={{ flex: 1, padding: '15px', borderRadius: '15px', backgroundColor: 'transparent', border: `1px solid ${BRAND.lightGray}`, color: 'white', fontWeight: '900', cursor: 'pointer' }}>CANCELAR</button>
+                  <button 
+                    onClick={handleAddManualItem}
+                    disabled={!selectedManualProd}
+                    style={{ flex: 1, padding: '15px', borderRadius: '15px', backgroundColor: BRAND.success, border: 'none', color: 'white', fontWeight: '900', cursor: 'pointer', opacity: selectedManualProd ? 1 : 0.5 }}
+                  >CONFIRMAR</button>
+                </div>
+              </div>
+            )}
 
             {occupiedTables.has(activeTable) && (
               <div style={{ borderTop: `1px solid ${BRAND.lightGray}`, paddingTop: '35px', marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '25px' }}>
@@ -470,7 +568,7 @@ export default function AdminPage() {
                      <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '30px', textAlign: 'center' }}>Pide al cliente que escanee este código para pagar.</p>
                      
                      <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '20px', marginBottom: '30px', boxShadow: `0 0 30px ${BRAND.gold}40` }}>
-                       <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=nequi-payment-link`} alt="Nequi QR" style={{ width: '200px', height: '200px' }} />
+                       <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent('https://pago.nequi.com.co/cuenta/' + nequiPhone)}`} alt="Nequi QR" style={{ width: '200px', height: '200px' }} />
                      </div>
                      
                      <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.5)' }}>Total a cobrar (con propina):</p>
