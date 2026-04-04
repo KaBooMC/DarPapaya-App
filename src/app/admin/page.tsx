@@ -280,17 +280,46 @@ export default function AdminPage() {
         return (
           <section style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
             <div style={{ backgroundColor: BRAND.darkGray, padding: '40px', borderRadius: '40px', border: `1px solid ${BRAND.lightGray}`, maxWidth: '900px' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '30px', marginBottom: '40px' }}>
-                <div style={{ backgroundColor: BRAND.orange + '10', padding: '25px', borderRadius: '25px', border: `1px solid ${BRAND.orange}30` }}>
-                  <QrCode size={40} color={BRAND.orange} />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '40px' }}>
+                {/* QR RECcomended (Uno solo para todo el local) */}
+                <div style={{ backgroundColor: BRAND.black, padding: '25px', borderRadius: '30px', border: `2px solid ${BRAND.orange}60`, display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', overflow: 'hidden' }}>
+                   <div style={{ position: 'absolute', top: 0, right: 0, backgroundColor: BRAND.orange, padding: '4px 12px', borderRadius: '0 0 0 15px' }}>
+                      <span style={{ fontSize: '9px', fontWeight: '900', color: BRAND.white }}>RECOMENDADO</span>
+                   </div>
+                   <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '15px', width: '100px', height: '100px', flexShrink: 0 }}>
+                      <img 
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(baseUrl + '/menu')}`} 
+                        alt="QR Único"
+                        style={{ width: '100%', height: '100%' }}
+                      />
+                   </div>
+                   <div>
+                      <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: BRAND.white }}>QR ÚNICO (PARA TODO EL LOCAL)</h4>
+                      <p style={{ margin: '4px 0 10px', fontSize: '11px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.3 }}>Los clientes eligen su mesa al entrar desde su celular.</p>
+                      <button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${baseUrl}/menu`);
+                          alert('¡Enlace único copiado!');
+                        }}
+                        style={{ backgroundColor: BRAND.orange, border: 'none', padding: '8px 15px', borderRadius: '8px', color: BRAND.white, fontSize: '10px', fontWeight: '900', cursor: 'pointer' }}
+                      >COPIAR LINK</button>
+                   </div>
                 </div>
-                <div>
-                  <h3 style={{ margin: '0 0 10px', fontSize: '28px', fontWeight: '900', color: BRAND.white }}>Enlaces QR por Mesa</h3>
-                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px', lineHeight: 1.6, margin: 0 }}>
-                    Aquí puedes ver y descargar los enlaces directos para cada mesa física. 
-                    Al escanearlos, el cliente entrará directamente a su mesa asignada.
-                  </p>
+
+                {/* QR Resumen de Uso */}
+                <div style={{ backgroundColor: BRAND.black, padding: '25px', borderRadius: '30px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', alignItems: 'center', gap: '20px' }}>
+                   <div style={{ backgroundColor: BRAND.orange + '10', padding: '15px', borderRadius: '15px' }}>
+                      <Users size={24} color={BRAND.orange} />
+                   </div>
+                   <div>
+                      <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '900', color: BRAND.white }}>O usa QRs por mesa</h4>
+                      <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>Imprime los códigos de abajo si prefieres que cada cliente tenga su mesa pre-asignada.</p>
+                   </div>
                 </div>
+              </div>
+
+              <div style={{ paddingBottom: '20px', borderBottom: `1px solid ${BRAND.lightGray}`, marginBottom: '40px' }}>
+                 <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '900', color: BRAND.orange }}>Lista de QRs Específicos</h3>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
@@ -532,22 +561,53 @@ export default function AdminPage() {
                     <CreditCard size={20} /> Pagado
                   </button>
                 </div>
-                
-                {showNequi && (
-                  <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(15,15,15,0.95)', backdropFilter: 'blur(10px)', borderRadius: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '30px', animation: 'slideIn 0.3s ease-out' }}>
-                     <h3 style={{ margin: '0 0 10px', fontSize: '24px', fontWeight: '900', color: BRAND.gold }}>Código Nequi</h3>
-                     <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '30px', textAlign: 'center' }}>Pide al cliente que escanee este código para pagar.</p>
-                     
-                     <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '20px', marginBottom: '30px', boxShadow: `0 0 30px ${BRAND.gold}40` }}>
-                       <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent('https://pago.nequi.com.co/cuenta/' + nequiPhone)}`} alt="Nequi QR" style={{ width: '200px', height: '200px' }} />
-                     </div>
-                     
-                     <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.5)' }}>Total a cobrar (con propina):</p>
-                     <p style={{ margin: '5px 0 30px', fontSize: '36px', fontWeight: '900', color: BRAND.white }}>${(includeTip ? (tableTotals[activeTable] || 0) * 1.1 : (tableTotals[activeTable] || 0)).toLocaleString()}</p>
-                     
-                     <button onClick={() => setShowNequi(false)} style={{ backgroundColor: BRAND.darkGray, border: `1px solid ${BRAND.lightGray}`, padding: '15px 40px', borderRadius: '15px', color: 'white', fontWeight: '900', cursor: 'pointer' }}>Cerrar Modal</button>
-                  </div>
-                )}
+                    {showNequi && (
+                    <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(15,15,15,0.98)', backdropFilter: 'blur(15px)', borderRadius: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', zIndex: 2000, animation: 'slideIn 0.3s ease-out' }}>
+                       <div style={{ backgroundColor: BRAND.gold + '10', padding: '15px 30px', borderRadius: '20px', border: `1px solid ${BRAND.gold}40`, marginBottom: '30px' }}>
+                         <h3 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase', letterSpacing: '2px' }}>Pagar con Nequi</h3>
+                       </div>
+                       
+                       <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '30px', textAlign: 'center', fontSize: '14px', lineHeight: 1.5 }}>
+                         Escanea el código desde tu **App Nequi** <br/>o copia el número para enviar el pago.
+                       </p>
+                       
+                       <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '30px', marginBottom: '30px', boxShadow: `0 0 50px ${BRAND.gold}30`, position: 'relative' }}>
+                         <img 
+                           src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${nequiPhone}`} 
+                           alt="Nequi QR" 
+                           style={{ width: '220px', height: '220px' }} 
+                         />
+                         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate( -50%, -50% )', width: '50px', height: '50px', backgroundColor: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 5px 15px rgba(0,0,0,0.1)' }}>
+                            <img src="https://static.nequi.com/v1/images/logo_nequi.svg" style={{ width: '35px' }} alt="N" />
+                         </div>
+                       </div>
+
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: BRAND.black, padding: '15px 25px', borderRadius: '20px', border: `1px solid ${BRAND.lightGray}`, marginBottom: '30px' }}>
+                          <div>
+                            <p style={{ margin: 0, fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: '900', textTransform: 'uppercase' }}>Número de Celular</p>
+                            <p style={{ margin: 0, fontSize: '20px', fontWeight: '900', color: BRAND.white }}>{nequiPhone}</p>
+                          </div>
+                          <button 
+                            onClick={() => {
+                              navigator.clipboard.writeText(nequiPhone);
+                              alert('Número copiado al portapapeles');
+                            }}
+                            style={{ backgroundColor: BRAND.gold, color: BRAND.black, border: 'none', padding: '10px 15px', borderRadius: '12px', fontWeight: '900', fontSize: '10px', cursor: 'pointer' }}
+                          >COPIAR</button>
+                       </div>
+                       
+                       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                         <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontWeight: '900', textTransform: 'uppercase' }}>Total a cobrar (con propina):</p>
+                         <p style={{ margin: '5px 0 0', fontSize: '42px', fontWeight: '900', color: BRAND.white }}>${(includeTip ? (tableTotals[activeTable] || 0) * 1.1 : (tableTotals[activeTable] || 0)).toLocaleString()}</p>
+                       </div>
+                       
+                       <button 
+                         onClick={() => setShowNequi(false)} 
+                         style={{ backgroundColor: 'transparent', border: `1px solid ${BRAND.lightGray}`, padding: '15px 40px', borderRadius: '18px', color: 'white', fontWeight: '900', cursor: 'pointer', transition: 'all 0.3s' }}
+                         className="btn-hover"
+                       >Cerrar Ventana</button>
+                    </div>
+                  )}
               </div>
             )}
           </div>

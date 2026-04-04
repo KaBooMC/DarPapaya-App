@@ -99,15 +99,9 @@ export default function Home() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <MapPin size={12} color={BRAND.orange} />
-              <span style={{ fontSize: '10px', fontWeight: '900', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Armenia, Quindío</span>
-            </div>
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <ShieldCheck size={12} color="#10B981" />
-              <span style={{ fontSize: '10px', fontWeight: '900', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>v1.0.4</span>
-            </div>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
+            <MapPin size={12} color={BRAND.orange} />
+            <span style={{ fontSize: '10px', fontWeight: '900', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Armenia, Quindío</span>
           </div>
         </header>
 
