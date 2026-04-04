@@ -27,33 +27,34 @@ export default function BarPage() {
   const playAlertSound = () => {
     if (!sessionStartedRef.current) return;
 
-    // 1. Efecto Visual: Parpadeo Azul de Pantalla
-    setFlashScreen(true)
-    setTimeout(() => setFlashScreen(false), 5000)
+    let count = 0;
+    const ringInterval = setInterval(() => {
+       // 1. Efecto Visual: Parpadeo Azul de Pantalla (Sincronizado)
+       setFlashScreen(true)
+       setTimeout(() => setFlashScreen(false), 700)
 
-    // 2. Vibrador
-    if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate([200, 100, 200]); 
-    }
+       // 2. Vibrador
+       if (typeof navigator !== 'undefined' && navigator.vibrate) {
+         navigator.vibrate([300]); 
+       }
 
-    // 3. Voz Robótica
-    try {
-      const msg = new SpeechSynthesisUtterance('Nueva bebida');
-      window.speechSynthesis.speak(msg);
-    } catch(e) {}
+       // 3. Voz Robótica (Solo la primera vez)
+       if (count === 0) {
+          try {
+            const msg = new SpeechSynthesisUtterance('Nueva bebida');
+            window.speechSynthesis.speak(msg);
+          } catch(e) {}
+       }
 
-    // 4. Campana Real (MP3) - Ráfaga de 3 sonidos
-    if (audioRef.current) {
-       let count = 0;
-       const ringInterval = setInterval(() => {
-          if (audioRef.current) {
-             audioRef.current.currentTime = 0;
-             audioRef.current.play().catch(e => console.error("Audio Bar Error:", e));
-          }
-          count++;
-          if (count >= 3) clearInterval(ringInterval);
-       }, 1500);
-    }
+       // 4. Campana Real (MP3)
+       if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play().catch(e => console.error("Audio Bar Error:", e));
+       }
+
+       count++;
+       if (count >= 4) clearInterval(ringInterval); 
+    }, 1400); 
   }
 
   const startShift = () => {
