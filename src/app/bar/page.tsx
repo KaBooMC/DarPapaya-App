@@ -42,10 +42,17 @@ export default function BarPage() {
       window.speechSynthesis.speak(msg);
     } catch(e) {}
 
-    // 4. Campana Real (MP3)
+    // 4. Campana Real (MP3) - Ráfaga de 3 sonidos
     if (audioRef.current) {
-       audioRef.current.currentTime = 0;
-       audioRef.current.play().catch(e => console.error("Audio Bar Error:", e));
+       let count = 0;
+       const ringInterval = setInterval(() => {
+          if (audioRef.current) {
+             audioRef.current.currentTime = 0;
+             audioRef.current.play().catch(e => console.error("Audio Bar Error:", e));
+          }
+          count++;
+          if (count >= 3) clearInterval(ringInterval);
+       }, 1500);
     }
   }
 
