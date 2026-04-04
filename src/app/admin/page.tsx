@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { LayoutDashboard, Search, CheckCircle2, QrCode, CreditCard, Users, Settings, LogOut, MapPin, ArrowLeft, Star, TrendingUp } from 'lucide-react'
+import { LayoutDashboard, Search, CheckCircle2, QrCode, CreditCard, Users, Settings, LogOut, MapPin, ArrowLeft, Star, TrendingUp, X } from 'lucide-react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
@@ -22,11 +22,15 @@ export default function AdminPage() {
   const [showManualModal, setShowManualModal] = useState(false)
   const [manualQty, setManualQty] = useState(1)
   const [selectedManualProd, setSelectedManualProd] = useState<any>(null)
-  const [nequiPhone, setNequiPhone] = useState('3210000000') // Número por defecto
+  const [nequiPhone, setNequiPhone] = useState('3210000000') 
   const tables = Array.from({ length: 20 }, (_, i) => i + 1)
 
   // Cargar mesas ocupadas en tiempo real
   useEffect(() => {
+    // Cargar número de Nequi persistido
+    const savedPhone = localStorage.getItem('darpapaya_nequi_phone')
+    if (savedPhone) setNequiPhone(savedPhone)
+
     const fetchOccupiedTables = async () => {
       const { data, error } = await supabase
         .from('pedidos')
@@ -268,7 +272,10 @@ export default function AdminPage() {
                   <input 
                     type="text" 
                     value={nequiPhone} 
-                    onChange={(e) => setNequiPhone(e.target.value)}
+                    onChange={(e) => {
+                      setNequiPhone(e.target.value)
+                      localStorage.setItem('darpapaya_nequi_phone', e.target.value)
+                    }}
                     style={{ width: '100%', backgroundColor: 'transparent', border: 'none', color: 'white', fontSize: '18px', fontWeight: '800', outline: 'none' }}
                     placeholder="3210000000"
                   />
@@ -564,6 +571,14 @@ export default function AdminPage() {
                     {showNequi && (
                     <div style={{ position: 'absolute', inset: 0, backgroundColor: BRAND.black, borderRadius: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', zIndex: 2000, animation: 'slideIn 0.3s ease-out', border: `2px solid ${BRAND.gold}` }}>
                        
+                       {/* BOTÓN CERRAR X */}
+                       <button 
+                         onClick={() => setShowNequi(false)}
+                         style={{ position: 'absolute', top: '30px', right: '30px', backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${BRAND.gold}40`, color: BRAND.gold, padding: '10px', borderRadius: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                       >
+                         <X size={24} />
+                       </button>
+
                        {/* LOGO NEQUI PREMIUM */}
                        <div style={{ marginBottom: '30px', textAlign: 'center' }}>
                          <img src="https://static.nequi.com/v1/images/logo_nequi.svg" style={{ width: '120px' }} alt="Nequi Logo" />
