@@ -22,14 +22,15 @@ export default function AdminPage() {
   const [showManualModal, setShowManualModal] = useState(false)
   const [manualQty, setManualQty] = useState(1)
   const [selectedManualProd, setSelectedManualProd] = useState<any>(null)
-  const [nequiPhone, setNequiPhone] = useState('3210000000') 
+  const [nequiQRImage, setNequiQRImage] = useState('') 
   const tables = Array.from({ length: 20 }, (_, i) => i + 1)
 
   // Cargar mesas ocupadas en tiempo real
   useEffect(() => {
     // Cargar número de Nequi persistido
-    const savedPhone = localStorage.getItem('darpapaya_nequi_phone')
-    if (savedPhone) setNequiPhone(savedPhone)
+    // Cargar QR de Nequi persistido
+    const savedQR = localStorage.getItem('darpapaya_nequi_qr_url')
+    if (savedQR) setNequiQRImage(savedQR)
 
     const fetchOccupiedTables = async () => {
       const { data, error } = await supabase
@@ -266,18 +267,18 @@ export default function AdminPage() {
 
             <div style={{ backgroundColor: BRAND.darkGray, padding: '30px', borderRadius: '30px', border: `1px solid ${BRAND.lightGray}`, marginTop: '30px', maxWidth: '600px' }}>
                <h3 style={{ margin: '0 0 15px', fontSize: '18px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase' }}>Configuración Nequi</h3>
-               <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', marginBottom: '20px' }}>Número oficial para los cobros QR por mesa.</p>
+               <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', marginBottom: '20px' }}>URL de la imagen QR para los cobros por mesa.</p>
                <div style={{ backgroundColor: BRAND.black, padding: '20px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}` }}>
-                  <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.orange, textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '8px' }}>Celular Nequi</label>
+                  <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.orange, textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '8px' }}>URL de Imagen QR (Oficial)</label>
                   <input 
                     type="text" 
-                    value={nequiPhone} 
+                    value={nequiQRImage} 
                     onChange={(e) => {
-                      setNequiPhone(e.target.value)
-                      localStorage.setItem('darpapaya_nequi_phone', e.target.value)
+                      setNequiQRImage(e.target.value)
+                      localStorage.setItem('darpapaya_nequi_qr_url', e.target.value)
                     }}
-                    style={{ width: '100%', backgroundColor: 'transparent', border: 'none', color: 'white', fontSize: '18px', fontWeight: '800', outline: 'none' }}
-                    placeholder="3210000000"
+                    style={{ width: '100%', backgroundColor: 'transparent', border: 'none', color: 'white', fontSize: '14px', fontWeight: '600', outline: 'none' }}
+                    placeholder="Pega aquí el enlace de la imagen del QR oficial..."
                   />
                </div>
             </div>
@@ -579,34 +580,34 @@ export default function AdminPage() {
                          <X size={24} />
                        </button>
 
-                       {/* LOGO NEQUI PREMIUM */}
-                       <div style={{ marginBottom: '30px', textAlign: 'center' }}>
-                         <img src="https://static.nequi.com/v1/images/logo_nequi.svg" style={{ width: '120px' }} alt="Nequi Logo" />
-                         <div style={{ height: '2px', width: '100px', backgroundColor: BRAND.gold, margin: '15px auto 0', borderRadius: '2px' }} />
+                       {/* ESPACIO PARA QR OFICIAL (PENDIENTE) */}
+                       <div style={{ backgroundColor: BRAND.darkGray, padding: '40px', borderRadius: '45px', marginBottom: '40px', boxShadow: `0 0 50px rgba(0,0,0,0.5)`, border: `2px dashed ${BRAND.lightGray}`, width: '280px', height: '280px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '15px' }}>
+                         {nequiQRImage ? (
+                           <img 
+                             src={nequiQRImage} 
+                             alt="Nequi QR Oficial" 
+                             style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                           />
+                         ) : (
+                           <>
+                             <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: `2px solid ${BRAND.orange}40`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <QrCode size={30} color={BRAND.orange} style={{ opacity: 0.5 }} />
+                             </div>
+                             <div>
+                               <p style={{ margin: 0, fontSize: '14px', fontWeight: '900', color: BRAND.white, textTransform: 'uppercase' }}>QR en Mantenimiento</p>
+                               <p style={{ margin: '5px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.4 }}>Solicita el código físico al mesero o configura la imagen en el panel.</p>
+                             </div>
+                           </>
+                         )}
                        </div>
 
-                       <h2 style={{ color: BRAND.white, fontSize: '32px', fontWeight: '900', margin: '0 0 10px', textTransform: 'uppercase', letterSpacing: '1px' }}>Escanea y Paga</h2>
-                       <p style={{ color: 'rgba(255,255,255,0.4)', marginBottom: '40px', textAlign: 'center', fontSize: '16px', fontWeight: '600' }}>
-                         Abre tu **App Nequi** y usa el escáner QR
-                       </p>
-                       
-                       {/* QR GIGANTE Y LIMPIO */}
-                       <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '45px', marginBottom: '40px', boxShadow: `0 0 70px ${BRAND.gold}20`, border: `8px solid ${BRAND.darkGray}` }}>
-                         <img 
-                           src={`https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${nequiPhone}`} 
-                           alt="Nequi QR" 
-                           style={{ width: '280px', height: '280px' }} 
-                         />
-                       </div>
-
-                       {/* INFORMACIÓN DE LA CUENTA (SOLO LECTURA PARA EL CLIENTE) */}
+                       {/* INFORMACIÓN DE LA CUENTA */}
                        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-                          <p style={{ margin: 0, fontSize: '12px', color: BRAND.gold, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Total a Transferir</p>
+                          <p style={{ margin: 0, fontSize: '12px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Total a Cobrar</p>
                           <p style={{ margin: '5px 0 0', fontSize: '56px', fontWeight: '900', color: BRAND.white, letterSpacing: '-2px' }}>
                             ${(includeTip ? (tableTotals[activeTable] || 0) * 1.1 : (tableTotals[activeTable] || 0)).toLocaleString()}
                           </p>
-                          <p style={{ margin: '10px 0 0', fontSize: '18px', color: 'rgba(255,255,255,0.5)', fontWeight: '700' }}>A nombre de: <strong>DARPAPAYA</strong></p>
-                          <p style={{ margin: '5px 0 0', fontSize: '16px', color: 'rgba(255,255,255,0.3)', fontWeight: '600' }}>Cel: {nequiPhone}</p>
+                          <p style={{ margin: '10px 0 0', fontSize: '16px', color: 'rgba(255,255,255,0.4)', fontWeight: '700' }}>DarPapaya Restaurant System</p>
                        </div>
                        
                        <button 
