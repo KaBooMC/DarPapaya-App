@@ -97,8 +97,16 @@ export default function BarPage() {
     const channel = supabase
       .channel('bar_changes')
       // @ts-ignore
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedido_items' }, () => {
-        playAlertSound()
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedido_items' }, (payload) => {
+        const isBarItem = (notas: string) => {
+          if (!notas) return false;
+          const lower = notas.toLowerCase();
+          return lower.includes('cerveza') || lower.includes('jugo') || lower.includes('limonada') || lower.includes('mandarina') || lower.includes('bebida') || lower.includes('tinto') || lower.includes('agua') || lower.includes('gaseosa');
+        }
+        
+        if (isBarItem(payload.new.notas)) {
+           playAlertSound()
+        }
         fetchOrders()
       })
       // @ts-ignore

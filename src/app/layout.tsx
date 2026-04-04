@@ -17,6 +17,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Darpapaya Legacy OS',
   description: 'Sistema de Gestión Gastronómica para Darpapaya',
+  icons: {
+    icon: 'https://images.unsplash.com/photo-1610815777174-84511d7f6c38?q=80&w=200&auto=format&fit=crop', // Logo representativo de Papaya
+  }
 }
 
 export default function RootLayout({

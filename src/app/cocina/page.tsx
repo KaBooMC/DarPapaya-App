@@ -100,12 +100,20 @@ export default function CocinaPage() {
     fetchOrders()
 
     // Suscripción Realtime
+    const isBarItem = (notas: string) => {
+      if (!notas) return false;
+      const lower = notas.toLowerCase();
+      return lower.includes('cerveza') || lower.includes('jugo') || lower.includes('limonada') || lower.includes('mandarina') || lower.includes('bebida') || lower.includes('tinto') || lower.includes('agua') || lower.includes('gaseosa');
+    }
+
     const channel = supabase
       .channel('cocina_changes')
       // @ts-ignore
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedido_items' }, (payload: any) => {
-        playAlertSound() // Suena la campana
-        fetchOrders() // Recargar al recibir nuevo item
+        if (!isBarItem(payload.new.notas)) {
+          playAlertSound()
+        }
+        fetchOrders()
       })
       // @ts-ignore
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedido_items' }, (payload: any) => {
