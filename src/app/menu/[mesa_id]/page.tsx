@@ -19,10 +19,44 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
   const [customNote, setCustomNote] = useState<string>('')
   const [localQuantities, setLocalQuantities] = useState<Record<string, number>>({})
   const [isHalfPortion, setIsHalfPortion] = useState(false)
+  const [pendingTotal, setPendingTotal] = useState(0)
 
   const filteredProducts = useMemo(() => 
     MOCK_PRODUCTS.filter(p => p.categoria === activeTab),
   [activeTab])
+
+  // 0. Sincronización del total pendiente (Cuenta real de la mesa)
+  useEffect(() => {
+    const fetchPendingTotal = async () => {
+      const { data, error } = await supabase
+        .from('pedidos')
+        .select('total')
+        .eq('mesa_id', parseInt(params.mesa_id))
+        .eq('estado_pago', 'pendiente')
+
+      if (!error && data) {
+        const sum = data.reduce((acc, curr) => acc + Number(curr.total), 0)
+        setPendingTotal(sum)
+      } else {
+        setPendingTotal(0)
+      }
+    }
+
+    fetchPendingTotal()
+
+    const channel = supabase
+      .channel(`table_account_${params.mesa_id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos', filter: `mesa_id=eq.${params.mesa_id}` }, (payload) => {
+        if (payload.eventType === 'UPDATE' && payload.new.estado_pago === 'pagado') {
+          setPendingTotal(0)
+        } else {
+          fetchPendingTotal()
+        }
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [params.mesa_id])
 
   const handleAddToCart = (product: any) => {
     setSelectedProduct(product)
@@ -47,7 +81,6 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
 
     if (isHalfPortion) {
       nombreFinal = `${selectedProduct.nombre} (1/2 Porción)`
-      // Ajuste de precio según la carta física
       precioFinal = selectedProduct.nombre.toLowerCase().includes('mariscos') ? 15900 : 8900
     }
 
@@ -59,7 +92,7 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
     setShowSuccess(`${qty}x ${nombreFinal}`)
     setTimeout(() => setShowSuccess(null), 3000)
     setSelectedProduct(null)
-    setLocalQuantities(prev => ({ ...prev, [selectedProduct.id]: 1 })) // Reset quantity
+    setLocalQuantities(prev => ({ ...prev, [selectedProduct.id]: 1 }))
   }
 
   const handleSendOrder = async () => {
@@ -67,25 +100,34 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
     setIsOrdering(true)
 
     try {
-      // 1. Crear el Pedido
-      const { data: pedido, error: pedidoError } = await supabase
+      const { data: existingPedido } = await supabase
         .from('pedidos')
-        .insert([{
-          mesa_id: parseInt(params.mesa_id),
-          total: total(),
-          estado_pago: 'pendiente'
-        }])
-        .select()
+        .select('id, total')
+        .eq('mesa_id', parseInt(params.mesa_id))
+        .eq('estado_pago', 'pendiente')
         .single()
 
-      if (pedidoError) throw pedidoError
+      let pedidoId: number;
+      if (existingPedido) {
+        pedidoId = existingPedido.id
+        await supabase
+          .from('pedidos')
+          .update({ total: Number(existingPedido.total) + total() })
+          .eq('id', pedidoId)
+      } else {
+        const { data: newPedido, error: pError } = await supabase
+          .from('pedidos')
+          .insert([{ mesa_id: parseInt(params.mesa_id), total: total(), estado_pago: 'pendiente' }])
+          .select().single()
+        if (pError) throw pError
+        pedidoId = newPedido.id
+      }
 
-      // 2. Insertar los Items del Pedido
       const pedidoItems = items.map(item => ({
-        pedido_id: pedido.id,
-        producto_id: null, // En un sistema real usaríamos el ID de Supabase, aquí usamos el nombre como referencia
+        pedido_id: pedidoId,
+        producto_id: null,
         cantidad: item.cantidad,
-        notas: item.nombre, // Guardamos el nombre aquí por ahora para simplificar el mock
+        notas: item.nombre,
         termino: item.termino,
         estado: 'pendiente'
       }))
@@ -96,7 +138,6 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
 
       if (itemsError) throw itemsError
 
-      // 3. Éxito
       setOrderSent(true)
       clearCart()
       setTimeout(() => setOrderSent(false), 5000)
@@ -273,7 +314,7 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
         </div>
         <div style={{ background: `linear-gradient(to right, ${BRAND.darkGray}, ${BRAND.black})`, padding: '8px 15px', borderRadius: '12px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', alignItems: 'center', gap: '8px' }}>
           <ShoppingBag size={18} color={BRAND.orange} />
-          <span style={{ fontWeight: '900', fontSize: '15px', color: BRAND.white }}>${total().toLocaleString()}</span>
+          <span style={{ fontWeight: '900', fontSize: '15px', color: BRAND.white }}>${(total() + pendingTotal).toLocaleString()}</span>
         </div>
       </header>
 
