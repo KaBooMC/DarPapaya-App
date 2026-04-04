@@ -1,7 +1,7 @@
 'use client'
 import { Beer, CheckCircle2, GlassWater, Timer, Zap, ArrowLeft, Clock, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 
 const BRAND = {
@@ -18,48 +18,46 @@ export default function BarPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [sessionStarted, setSessionStarted] = useState(false)
+  const sessionStartedRef = useRef(false)
   const [flashScreen, setFlashScreen] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  const BELL_URL_BAR = 'https://assets.mixkit.co/active_storage/sfx/2868/2868-preview.mp3'
 
   const playAlertSound = () => {
-    if (!sessionStarted) return;
+    if (!sessionStartedRef.current) return;
 
     // 1. Efecto Visual: Parpadeo Azul de Pantalla
     setFlashScreen(true)
-    setTimeout(() => setFlashScreen(false), 3000)
+    setTimeout(() => setFlashScreen(false), 5000)
 
     // 2. Vibrador
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate([200, 100, 200, 100, 800]); 
+      navigator.vibrate([200, 100, 200]); 
     }
 
     // 3. Voz Robótica
     try {
-      const msg = new SpeechSynthesisUtterance('Nuevo pedido en bar');
+      const msg = new SpeechSynthesisUtterance('Nueva bebida');
       window.speechSynthesis.speak(msg);
     } catch(e) {}
 
-    // 4. Timbre (AudioContext)
-    try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      audioCtx.resume();
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      
-      oscillator.type = 'triangle';
-      oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime); // C6 (agudo para bar)
-      oscillator.frequency.exponentialRampToValueAtTime(523.25, audioCtx.currentTime + 0.3);
-      
-      gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      
-      oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 0.8);
-    } catch (e) {
-      console.error('Audio error:', e);
+    // 4. Campana Real (MP3)
+    if (audioRef.current) {
+       audioRef.current.currentTime = 0;
+       audioRef.current.play().catch(e => console.error("Audio Bar Error:", e));
     }
+  }
+
+  const startShift = () => {
+    setSessionStarted(true)
+    sessionStartedRef.current = true
+    const audio = new Audio(BELL_URL_BAR)
+    audio.load()
+    audioRef.current = audio
+    audio.play().then(() => {
+       audio.pause()
+    }).catch(e => console.error("Init Bar Audio Error:", e))
   }
 
   useEffect(() => {
@@ -91,7 +89,7 @@ export default function BarPage() {
     const channel = supabase
       .channel('bar_changes')
       // @ts-ignore
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedido_items' }, (payload) => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedido_items' }, () => {
         playAlertSound()
         fetchOrders()
       })
@@ -116,8 +114,8 @@ export default function BarPage() {
               Para que la campana de pedidos suene correctamente, debes iniciar el turno.
             </p>
             <button 
-              onClick={() => setSessionStarted(true)}
-              style={{ backgroundColor: BRAND.blue, color: BRAND.white, border: 'none', padding: '15px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase', width: '100%' }}
+              onClick={startShift}
+              style={{ backgroundColor: BRAND.blue, color: BRAND.white, border: 'none', padding: '15px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase', width: '100%', boxShadow: `0 10px 20px ${BRAND.blue}40` }}
             >
               Empezar Turno
             </button>
@@ -170,6 +168,12 @@ export default function BarPage() {
         </div>
 
         <div style={{ display: 'flex', gap: '15px' }}>
+          <button 
+            onClick={playAlertSound}
+            style={{ padding: '10px 15px', borderRadius: '15px', backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${BRAND.lightGray}`, color: BRAND.white, fontSize: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+            <Timer size={14} color={BRAND.cyan} /> PROBAR SONIDO
+          </button>
           <div style={{ backgroundColor: BRAND.darkGray, padding: '10px 20px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}`, textAlign: 'center' }}>
             <p style={{ margin: 0, fontSize: '9px', color: 'rgba(255,255,255,0.3)', fontWeight: '900', textTransform: 'uppercase' }}>Pendientes</p>
             <p style={{ margin: 0, fontSize: '22px', fontWeight: '900', color: BRAND.blue }}>{orders.length}</p>

@@ -1,7 +1,7 @@
 'use client'
 import { ChefHat, CheckCircle2, AlertTriangle, Timer, Clock, Utensils, ArrowLeft, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 
 const BRAND = {
@@ -19,48 +19,48 @@ export default function CocinaPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [sessionStarted, setSessionStarted] = useState(false)
+  const sessionStartedRef = useRef(false)
   const [flashScreen, setFlashScreen] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  const BELL_URL = 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'
 
   const playAlertSound = () => {
-    if (!sessionStarted) return;
+    if (!sessionStartedRef.current) return;
     
     // 1. Efecto Visual: Parpadeo Rojo de Pantalla
     setFlashScreen(true)
-    setTimeout(() => setFlashScreen(false), 3000)
+    setTimeout(() => setFlashScreen(false), 5000)
 
-    // 2. Vibrador Físico (Funciona en Android/Móviles)
+    // 2. Vibrador Físico (Android)
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate([400, 200, 400, 200, 1000]); 
+      navigator.vibrate([500, 200, 500]); 
     }
 
-    // 3. Voz Robótica del Dispositivo (Habla)
+    // 3. Voz Robótica 
     try {
-      const msg = new SpeechSynthesisUtterance('Nueva orden en cocina');
+      const msg = new SpeechSynthesisUtterance('Comanda nueva');
       window.speechSynthesis.speak(msg);
     } catch(e) {}
 
-    // 4. Timbre (AudioContext mejorado)
-    try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      audioCtx.resume();
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
-      oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.5);
-      
-      gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      
-      oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 1);
-    } catch (e) {
-      console.error('Audio error:', e);
+    // 4. Campana Real (MP3)
+    if (audioRef.current) {
+       audioRef.current.currentTime = 0;
+       audioRef.current.play().catch(e => console.error("Audio Play Error:", e));
     }
+  }
+
+  const startShift = () => {
+    setSessionStarted(true)
+    sessionStartedRef.current = true
+    // Inicializar el objeto de audio al hacer clic (Desbloqueo legal)
+    const audio = new Audio(BELL_URL)
+    audio.load()
+    audioRef.current = audio
+    // Play mudo para desbloquear
+    audio.play().then(() => {
+       audio.pause()
+    }).catch(e => console.error("Init Audio Error:", e))
   }
 
   // Cargar pedidos iniciales y escuchar Realtime
@@ -131,8 +131,8 @@ export default function CocinaPage() {
               Para que la campana de pedidos suene correctamente, debes iniciar el turno.
             </p>
             <button 
-              onClick={() => setSessionStarted(true)}
-              style={{ backgroundColor: BRAND.orange, color: BRAND.white, border: 'none', padding: '15px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase', width: '100%' }}
+              onClick={startShift}
+              style={{ backgroundColor: BRAND.orange, color: BRAND.white, border: 'none', padding: '15px 40px', borderRadius: '20px', fontSize: '18px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase', width: '100%', boxShadow: `0 10px 20px ${BRAND.orange}40` }}
             >
               Empezar Turno
             </button>
@@ -184,16 +184,22 @@ export default function CocinaPage() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '15px' }}>
-          <div style={{ backgroundColor: BRAND.darkGray, padding: '10px 20px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}`, textAlign: 'center' }}>
-            <p style={{ margin: 0, fontSize: '9px', color: 'rgba(255,255,255,0.3)', fontWeight: '900', textTransform: 'uppercase' }}>Pendientes</p>
-            <p style={{ margin: 0, fontSize: '22px', fontWeight: '900', color: BRAND.orange }}>{orders.length}</p>
+          <div style={{ display: 'flex', gap: '15px' }}>
+            <button 
+              onClick={playAlertSound}
+              style={{ padding: '10px 15px', borderRadius: '15px', backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${BRAND.lightGray}`, color: BRAND.white, fontSize: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <Timer size={14} color={BRAND.gold} /> PRUEBA DE SONIDO
+            </button>
+            <div style={{ backgroundColor: BRAND.darkGray, padding: '10px 20px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}`, textAlign: 'center' }}>
+              <p style={{ margin: 0, fontSize: '9px', color: 'rgba(255,255,255,0.3)', fontWeight: '900', textTransform: 'uppercase' }}>Pendientes</p>
+              <p style={{ margin: 0, fontSize: '22px', fontWeight: '900', color: BRAND.orange }}>{orders.length}</p>
+            </div>
+            <div style={{ backgroundColor: BRAND.darkGray, width: '60px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+               <Timer size={18} color={BRAND.gold} style={{ animation: 'pulse-gold 2s infinite' }} />
+               <p style={{ margin: '3px 0 0', fontSize: '8px', color: BRAND.gold, fontWeight: '900' }}>LIVE</p>
+            </div>
           </div>
-          <div style={{ backgroundColor: BRAND.darkGray, width: '60px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-             <Timer size={18} color={BRAND.gold} style={{ animation: 'pulse-gold 2s infinite' }} />
-             <p style={{ margin: '3px 0 0', fontSize: '8px', color: BRAND.gold, fontWeight: '900' }}>LIVE</p>
-          </div>
-        </div>
       </header>
 
       <main className="order-grid">
