@@ -259,6 +259,21 @@ export default function AdminPage() {
                 </div>
               ))}
             </div>
+
+            <div style={{ backgroundColor: BRAND.darkGray, padding: '30px', borderRadius: '30px', border: `1px solid ${BRAND.lightGray}`, marginTop: '30px', maxWidth: '600px' }}>
+               <h3 style={{ margin: '0 0 15px', fontSize: '18px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase' }}>Configuración Nequi</h3>
+               <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', marginBottom: '20px' }}>Número oficial para los cobros QR por mesa.</p>
+               <div style={{ backgroundColor: BRAND.black, padding: '20px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}` }}>
+                  <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.orange, textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '8px' }}>Celular Nequi</label>
+                  <input 
+                    type="text" 
+                    value={nequiPhone} 
+                    onChange={(e) => setNequiPhone(e.target.value)}
+                    style={{ width: '100%', backgroundColor: 'transparent', border: 'none', color: 'white', fontSize: '18px', fontWeight: '800', outline: 'none' }}
+                    placeholder="3210000000"
+                  />
+               </div>
+            </div>
           </section>
         )
       case 'qr':
@@ -266,90 +281,46 @@ export default function AdminPage() {
           <section style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
             <div style={{ backgroundColor: BRAND.darkGray, padding: '40px', borderRadius: '40px', border: `1px solid ${BRAND.lightGray}`, maxWidth: '900px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '30px', marginBottom: '40px' }}>
-                <div style={{ backgroundColor: BRAND.orange + '15', padding: '25px', borderRadius: '25px', border: `1px solid ${BRAND.orange}30` }}>
+                <div style={{ backgroundColor: BRAND.orange + '10', padding: '25px', borderRadius: '25px', border: `1px solid ${BRAND.orange}30` }}>
                   <QrCode size={40} color={BRAND.orange} />
                 </div>
                 <div>
-                  <h3 style={{ margin: '0 0 10px', fontSize: '28px', fontWeight: '900', color: BRAND.white }}>Gestión de Mesas y QRs</h3>
+                  <h3 style={{ margin: '0 0 10px', fontSize: '28px', fontWeight: '900', color: BRAND.white }}>Enlaces QR por Mesa</h3>
                   <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px', lineHeight: 1.6, margin: 0 }}>
-                    Tu sistema está configurado con <strong>Rutas Dinámicas</strong>. Esto significa que con una sola página en Netlify puedes manejar infinitas mesas. Solo imprime el QR correspondiente a cada mesa y el sistema hará el resto.
+                    Aquí puedes ver y descargar los enlaces directos para cada mesa física. 
+                    Al escanearlos, el cliente entrará directamente a su mesa asignada.
                   </p>
                 </div>
               </div>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom: '40px' }}>
-                <div style={{ backgroundColor: BRAND.black, padding: '25px', borderRadius: '25px', border: `1px solid ${BRAND.lightGray}` }}>
-                  <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '12px' }}>Número de Nequi oficial</label>
-                  <div style={{ position: 'relative' }}>
-                    <input 
-                      type="text" 
-                      value={nequiPhone} 
-                      onChange={(e) => setNequiPhone(e.target.value)}
-                      style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${BRAND.lightGray}`, padding: '18px 20px', borderRadius: '15px', color: 'white', fontSize: '14px', outline: 'none', transition: 'all 0.3s' }}
-                      placeholder="3210000000"
-                    />
-                    <div style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', backgroundColor: BRAND.orange, width: '8px', height: '8px', borderRadius: '50%', boxShadow: `0 0 10px ${BRAND.orange}` }} />
-                  </div>
-                </div>
-                
-                <div style={{ backgroundColor: BRAND.black, padding: '25px', borderRadius: '25px', border: `2px solid ${BRAND.orange}60`, display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', overflow: 'hidden' }}>
-                   <div style={{ position: 'absolute', top: 0, right: 0, backgroundColor: BRAND.orange, padding: '4px 12px', borderRadius: '0 0 0 15px' }}>
-                      <span style={{ fontSize: '9px', fontWeight: '900', color: BRAND.white }}>RECOMENDADO</span>
-                   </div>
-                   <div style={{ backgroundColor: 'white', padding: '8px', borderRadius: '12px', width: '80px', height: '80px' }}>
-                      <img 
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(baseUrl + '/menu')}`} 
-                        alt="QR Genérico"
-                        style={{ width: '100%', height: '100%' }}
-                      />
-                   </div>
-                   <div>
-                      <p style={{ margin: 0, fontSize: '11px', color: BRAND.gold, fontWeight: '800', textTransform: 'uppercase' }}>QR ÚNICO (PARA TODO EL LOCAL)</p>
-                      <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: 'rgba(255,255,255,0.4)', lineHeight: 1.3 }}>Los clientes eligen su mesa al entrar.</p>
-                      <button 
-                        onClick={() => {
-                          navigator.clipboard.writeText(`${baseUrl}/menu`)
-                          alert('¡Enlace de QR Único copiado!')
-                        }}
-                        style={{ marginTop: '10px', backgroundColor: BRAND.orange, border: 'none', padding: '8px 15px', borderRadius: '8px', color: BRAND.white, fontSize: '10px', fontWeight: '900', cursor: 'pointer' }}
-                      >
-                        COPIAR LINK ÚNICO
-                      </button>
-                   </div>
-                </div>
-              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
                 {tables.map(t => (
-                  <div key={t} className="qr-card" style={{ backgroundColor: BRAND.black, padding: '25px', borderRadius: '30px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', flexDirection: 'column', gap: '20px', transition: 'all 0.3s' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <p style={{ margin: 0, fontSize: '10px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase' }}>Zona A</p>
-                        <p style={{ margin: 0, fontSize: '22px', fontWeight: '900', color: BRAND.white }}>Mesa {t}</p>
-                      </div>
-                      <div style={{ width: '100px', height: '100px', backgroundColor: 'white', borderRadius: '15px', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px rgba(0,0,0,0.3)' }}>
-                        <img 
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(baseUrl + '/menu/' + t)}`} 
-                          alt={`QR Mesa ${t}`}
-                          style={{ width: '100%', height: '100%' }}
-                        />
-                      </div>
+                  <div key={t} style={{ backgroundColor: BRAND.black, padding: '20px', borderRadius: '25px', border: `1px solid ${BRAND.lightGray}`, textAlign: 'center' }}>
+                    <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '15px', marginBottom: '15px' }}>
+                      <img 
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(baseUrl + '/menu/' + t)}`} 
+                        alt={`QR Mesa ${t}`}
+                        style={{ width: '100%' }}
+                      />
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <code style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', wordBreak: 'break-all', backgroundColor: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                        {baseUrl}/menu/{t}
-                      </code>
-                      <button 
-                        onClick={() => {
-                          navigator.clipboard.writeText(`${baseUrl}/menu/${t}`)
-                          alert(`¡Link de Mesa ${t} copiado!`)
-                        }}
-                        className="btn-hover btn-active"
-                        style={{ width: '100%', backgroundColor: BRAND.darkGray, border: `1px solid ${BRAND.lightGray}`, padding: '12px', borderRadius: '12px', color: BRAND.white, fontSize: '11px', fontWeight: '900', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '1px' }}
-                      >
-                        Copiar Enlace
-                      </button>
-                    </div>
+                    <p style={{ margin: '0 0 10px', fontSize: '14px', fontWeight: '900', color: BRAND.gold }}>MESA {t}</p>
+                    <button 
+                      onClick={() => {
+                        const win = window.open('', '_blank');
+                        if (win) {
+                          win.document.write(`
+                            <div style="text-align:center; padding: 50px; font-family: sans-serif;">
+                              <h1 style="font-size: 40px;">MESA ${t}</h1>
+                              <p>Escanea para ver el menú digital</p>
+                              <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(baseUrl + '/menu/' + t)}" style="width:300px; height:300px;" />
+                              <p style="margin-top:20px; color: #666;">DarPapaya Restaurant System</p>
+                            </div>
+                          `);
+                          win.print();
+                        }
+                      }}
+                      style={{ width: '100%', backgroundColor: BRAND.darkGray, border: `1px solid ${BRAND.lightGray}`, padding: '10px', borderRadius: '10px', color: 'white', fontSize: '11px', fontWeight: '900', cursor: 'pointer' }}
+                    >IMPRIMIR</button>
                   </div>
                 ))}
               </div>

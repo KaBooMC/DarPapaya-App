@@ -16,15 +16,17 @@ export default function BarPage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [sessionStarted, setSessionStarted] = useState(false)
-  const sessionStartedRef = useRef(false)
   const [flashScreen, setFlashScreen] = useState(false)
+  const sessionStartedRef = useRef(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const isAlertingRef = useRef(false)
 
   const BELL_URL_BAR = 'https://assets.mixkit.co/active_storage/sfx/2868/2868-preview.mp3'
 
   const playAlertSound = () => {
-    if (!sessionStartedRef.current) return;
+    if (!sessionStartedRef.current || isAlertingRef.current) return;
 
+    isAlertingRef.current = true;
     let count = 0;
     const ringInterval = setInterval(() => {
        // 1. Efecto Visual: Parpadeo Azul de Pantalla (Sincronizado)
@@ -51,7 +53,10 @@ export default function BarPage() {
        }
 
        count++;
-       if (count >= 4) clearInterval(ringInterval); 
+       if (count >= 4) {
+         clearInterval(ringInterval);
+         isAlertingRef.current = false;
+       }
     }, 1400); 
   }
 
@@ -67,6 +72,19 @@ export default function BarPage() {
   }
 
   useEffect(() => {
+    const isBarItem = (notas: string) => {
+      if (!notas) return false;
+      const lower = notas.toLowerCase();
+      // Ser muy específicos para evitar sonidos fantasma
+      return lower.includes('cerveza') || 
+             lower.includes('jugo') || 
+             lower.includes('limonada') || 
+             lower.includes('mandarina') || 
+             lower.includes('bebida') ||
+             lower.includes('limonada de coco') ||
+             lower.includes('limonada cerezada');
+    }
+
     const fetchOrders = async () => {
       const { data, error } = await supabase
         .from('pedido_items')
@@ -80,11 +98,6 @@ export default function BarPage() {
       if (error) {
         console.error('Error fetching bar orders:', error)
       } else {
-        const isBarItem = (notas: string) => {
-          if (!notas) return false;
-          const lower = notas.toLowerCase();
-          return lower.includes('cerveza') || lower.includes('jugo') || lower.includes('limonada') || lower.includes('mandarina') || lower.includes('bebida');
-        }
         setOrders((data || []).filter(o => isBarItem(o.notas)))
       }
       setLoading(false)
@@ -96,16 +109,10 @@ export default function BarPage() {
       .channel('bar_changes')
       // @ts-ignore
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedido_items' }, (payload) => {
-        const isBarItem = (notas: string) => {
-          if (!notas) return false;
-          const lower = notas.toLowerCase();
-          return lower.includes('cerveza') || lower.includes('jugo') || lower.includes('limonada') || lower.includes('mandarina') || lower.includes('bebida') || lower.includes('tinto') || lower.includes('agua') || lower.includes('gaseosa');
-        }
-        
         if (isBarItem(payload.new.notas)) {
            playAlertSound()
+           fetchOrders()
         }
-        fetchOrders()
       })
       // @ts-ignore
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedido_items' }, fetchOrders)
