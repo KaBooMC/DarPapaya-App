@@ -11,7 +11,13 @@
 DELETE FROM pedido_items;
 DELETE FROM pedidos;
 DELETE FROM productos;
-DELETE FROM meseros;
+-- Limpiar meseros solo si la tabla existe (Previene error de primera instalación)
+DO $$ 
+BEGIN 
+    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'meseros') THEN
+        DELETE FROM meseros;
+    END IF;
+END $$;
 
 -- Asegurar que los IDs sean UUIDs y que los totales acepten decimales (Euros)
 -- El esquema ya está preparado, pero aquí reafirmamos la estructura:
@@ -63,4 +69,10 @@ CREATE TABLE IF NOT EXISTS meseros (
 ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS mesero_nombre TEXT DEFAULT 'General';
 
 -- Insertar mesero inicial para pruebas
+-- Insertar mesero inicial para pruebas
 INSERT INTO meseros (nombre, pin) VALUES ('Admin', '2026') ON CONFLICT DO NOTHING;
+
+-- Habilitar RLS y políticas para que el Admin pueda gestionar meseros
+ALTER TABLE meseros ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Permitir todo a meseros" ON meseros;
+CREATE POLICY "Permitir todo a meseros" ON meseros FOR ALL USING (true);

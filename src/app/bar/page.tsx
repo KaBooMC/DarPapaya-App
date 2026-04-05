@@ -75,23 +75,23 @@ export default function BarPage() {
     const isBarItem = (notas: string) => {
       if (!notas) return false;
       const lower = notas.toLowerCase();
-      // Ser muy específicos para evitar sonidos fantasma
+      // Nombres exactos de la carta de Madrid
       return lower.includes('cerveza') || 
              lower.includes('jugo') || 
              lower.includes('limonada') || 
-             lower.includes('mandarina') || 
-             lower.includes('bebida') ||
-             lower.includes('limonada de coco') ||
-             lower.includes('limonada cerezada') ||
+             lower.includes('zumo') || 
+             lower.includes('tinto') ||
              lower.includes('cafe') ||
              lower.includes('café') ||
-             lower.includes('tinto') ||
              lower.includes('cortado') ||
-             lower.includes('espresso') ||
-             lower.includes('capuchino') ||
-             lower.includes('zumo') ||
-             lower.includes('agua') ||
-             lower.includes('gaseosa');
+             lower.includes('refresco') ||
+             lower.includes('postobon') ||
+             lower.includes('colombiana') ||
+             lower.includes('pony malta') ||
+             lower.includes('refajo') ||
+             lower.includes('salpicon') ||
+             lower.includes('salpicón') ||
+             lower.includes('chupito');
     }
 
     const fetchOrders = async () => {

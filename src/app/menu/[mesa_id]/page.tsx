@@ -20,6 +20,7 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
   const [localQuantities, setLocalQuantities] = useState<Record<string, number>>({})
   const [isHalfPortion, setIsHalfPortion] = useState(false)
   const [pendingTotal, setPendingTotal] = useState(0)
+  const [showMoreIndicator, setShowMoreIndicator] = useState(true)
 
   const filteredProducts = useMemo(() => 
     MOCK_PRODUCTS.filter(p => p.categoria === activeTab),
@@ -324,18 +325,28 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
         </div>
       </header>
 
-      {/* CATEGORÍAS - ESTILO PREMIUM (CON INDICADOR DE SCROLL) */}
+      {/* CATEGORÍAS - ESTILO PREMIUM (CON INDICADOR DE SCROLL DINÁMICO) */}
       <div style={{ position: 'sticky', top: '67px', zIndex: 90, backgroundColor: BRAND.black, padding: '15px 0', borderBottom: `1px solid ${BRAND.lightGray}` }}>
         <div style={{ position: 'relative', width: '100%' }}>
-          {/* Indicador visual de 'Desliza para ver más' */}
-          <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', zIndex: 5, color: BRAND.orange, animation: 'bounceRight 1s infinite', pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: 'rgba(15,15,15,0.8)', padding: '4px 8px', borderRadius: '10px', border: `1px solid ${BRAND.orange}40` }}>
-            <span style={{ fontSize: '8px', fontWeight: '900' }}>MÁS</span>
-            <ChevronRight size={12} />
-          </div>
+          {/* Indicador visual de 'Desliza para ver más' - Se oculta al scrollear */}
+          {showMoreIndicator && (
+            <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', zIndex: 5, color: BRAND.orange, animation: 'bounceRight 1s infinite', pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: 'rgba(15,15,15,0.95)', padding: '6px 12px', borderRadius: '12px', border: `1px solid ${BRAND.orange}40`, boxShadow: `0 0 20px rgba(0,0,0,0.5)`, transition: 'opacity 0.3s' }}>
+              <span style={{ fontSize: '9px', fontWeight: '900' }}>MÁS</span>
+              <ChevronRight size={12} />
+            </div>
+          )}
           
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', padding: '0 20px' }}>
+          <div 
+            onScroll={(e) => {
+              const target = e.target as HTMLDivElement;
+              if (target.scrollLeft > 20) setShowMoreIndicator(false);
+              else setShowMoreIndicator(true);
+            }}
+            style={{ display: 'flex', gap: '8px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', padding: '0 20px' }}
+          >
             <style dangerouslySetInnerHTML={{ __html: `
                div::-webkit-scrollbar { display: none; }
+               @keyframes bounceRight { 0%, 100% { transform: translateY(-50%) translateX(0); } 50% { transform: translateY(-50%) translateX(5px); } }
             `}} />
             {[
               { id: 'tipicos', label: 'Típicos', icon: <UtensilsCrossed size={16} /> },

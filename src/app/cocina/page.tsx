@@ -63,6 +63,28 @@ export default function CocinaPage() {
 
   // Cargar pedidos iniciales y escuchar Realtime
   useEffect(() => {
+    const isBarItem = (notas: string) => {
+      if (!notas) return false;
+      const lower = notas.toLowerCase();
+      // Nombres exactos de la carta de Madrid
+      return lower.includes('cerveza') || 
+             lower.includes('jugo') || 
+             lower.includes('limonada') || 
+             lower.includes('zumo') || 
+             lower.includes('tinto') ||
+             lower.includes('cafe') ||
+             lower.includes('café') ||
+             lower.includes('cortado') ||
+             lower.includes('refresco') ||
+             lower.includes('postobon') ||
+             lower.includes('colombiana') ||
+             lower.includes('pony malta') ||
+             lower.includes('refajo') ||
+             lower.includes('salpicon') ||
+             lower.includes('salpicón') ||
+             lower.includes('chupito');
+    }
+
     const fetchOrders = async () => {
       const { data, error } = await supabase
         .from('pedido_items')
@@ -76,27 +98,6 @@ export default function CocinaPage() {
       if (error) {
         console.error('Error fetching orders:', error)
       } else {
-        // Filtrar solo los que van a cocina (ignorando bebidas incluso si traen notas extra)
-        const isBarItem = (notas: string) => {
-          if (!notas) return false;
-          const lower = notas.toLowerCase();
-          return lower.includes('cerveza') || 
-                 lower.includes('jugo') || 
-                 lower.includes('limonada') || 
-                 lower.includes('mandarina') || 
-                 lower.includes('bebida') ||
-                 lower.includes('limonada de coco') ||
-                 lower.includes('limonada cerezada') ||
-                 lower.includes('cafe') ||
-                 lower.includes('café') ||
-                 lower.includes('tinto') ||
-                 lower.includes('cortado') ||
-                 lower.includes('espresso') ||
-                 lower.includes('capuchino') ||
-                 lower.includes('zumo') ||
-                 lower.includes('agua') ||
-                 lower.includes('gaseosa');
-        }
         setOrders((data || []).filter(o => !isBarItem(o.notas)))
       }
       setLoading(false)
@@ -105,40 +106,17 @@ export default function CocinaPage() {
     fetchOrders()
 
     // Suscripción Realtime
-    const isBarItem = (notas: string) => {
-      if (!notas) return false;
-      const lower = notas.toLowerCase();
-      return lower.includes('cerveza') || 
-             lower.includes('jugo') || 
-             lower.includes('limonada') || 
-             lower.includes('mandarina') || 
-             lower.includes('bebida') ||
-             lower.includes('limonada de coco') ||
-             lower.includes('limonada cerezada') ||
-             lower.includes('cafe') ||
-             lower.includes('café') ||
-             lower.includes('tinto') ||
-             lower.includes('cortado') ||
-             lower.includes('espresso') ||
-             lower.includes('capuchino') ||
-             lower.includes('zumo') ||
-             lower.includes('agua') ||
-             lower.includes('gaseosa');
-    }
-
     const channel = supabase
       .channel('cocina_changes')
       // @ts-ignore
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedido_items' }, (payload: any) => {
         if (!isBarItem(payload.new.notas)) {
-          playAlertSound()
+           playAlertSound()
+           fetchOrders()
         }
-        fetchOrders()
       })
       // @ts-ignore
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedido_items' }, (payload: any) => {
-        fetchOrders() // Recargar al actualizar (despachar)
-      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedido_items' }, fetchOrders)
       .subscribe()
 
     return () => {

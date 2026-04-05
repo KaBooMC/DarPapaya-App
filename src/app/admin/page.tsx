@@ -35,10 +35,14 @@ export default function AdminPage() {
   const [waiterPinError, setWaiterPinError] = useState(false)
   const [selectedWaiterForLogin, setSelectedWaiterForLogin] = useState<any>(null)
 
-  // STATS ADICIONALES
   const [topWaiters, setTopWaiters] = useState<any[]>([])
   const [topProducts, setTopProducts] = useState<any[]>([])
   const [currentTime, setCurrentTime] = useState(new Date())
+
+  // ESTADOS FORMULARIO PERSONAL
+  const [showAddWaiterForm, setShowAddWaiterForm] = useState(false)
+  const [newWaiterName, setNewWaiterName] = useState('')
+  const [newWaiterPin, setNewWaiterPin] = useState('')
 
   const tables = Array.from({ length: 20 }, (_, i) => i + 1)
 
@@ -577,42 +581,98 @@ export default function AdminPage() {
         )
       case 'personal':
         return (
-          <section style={{ maxWidth: '800px' }}>
-             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+          <section style={{ maxWidth: '900px' }}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px', gap: '20px', flexWrap: 'wrap' }}>
                 <div>
-                   <h3 style={{ margin: 0, fontSize: '24px', fontWeight: '900' }}>GESTIÓN DE PERSONAL</h3>
-                   <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Administra quiénes pueden tomar comandas y ver ventas.</p>
+                   <h3 style={{ margin: 0, fontSize: '28px', fontWeight: '900', letterSpacing: '-1px' }}>GESTIÓN DE <span style={{ color: BRAND.orange }}>PERSONAL</span></h3>
+                   <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', marginTop: '5px' }}>Administra el equipo de meseros de DarPapaya Madrid.</p>
                 </div>
-                <button 
-                   onClick={() => {
-                      const name = prompt('Nombre del mesero:')
-                      const pin = prompt('PIN de 4 dígitos:')
-                      if (name && pin) handleAddWaiter(name, pin)
-                   }}
-                   style={{ backgroundColor: BRAND.orange, color: 'white', border: 'none', padding: '15px 30px', borderRadius: '20px', fontWeight: '900', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
-                >
-                   <Plus size={18} /> AGREGAR MESERO
-                </button>
+                {!showAddWaiterForm && (
+                  <button 
+                     onClick={() => setShowAddWaiterForm(true)}
+                     style={{ backgroundColor: BRAND.success, color: 'white', border: 'none', padding: '15px 30px', borderRadius: '20px', fontWeight: '900', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: `0 10px 20px ${BRAND.success}30` }}
+                  >
+                     <Plus size={18} /> NUEVO MESERO
+                  </button>
+                )}
              </div>
 
-             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+             {showAddWaiterForm && (
+                <div style={{ backgroundColor: BRAND.darkGray, padding: '35px', borderRadius: '40px', border: `1px solid ${BRAND.orange}60`, marginBottom: '40px', animation: 'slideDown 0.3s ease-out' }}>
+                   <style dangerouslySetInnerHTML={{ __html: `@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }` }} />
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+                      <h4 style={{ margin: 0, fontSize: '18px', fontWeight: '900' }}>Registrar Nuevo Personal</h4>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: BRAND.orange + '10', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                         <Users size={20} color={BRAND.orange} />
+                      </div>
+                   </div>
+                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '25px', marginBottom: '30px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                         <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase', letterSpacing: '2px' }}>Nombre del Mesero</label>
+                         <input 
+                            type="text" 
+                            value={newWaiterName}
+                            onChange={(e) => setNewWaiterName(e.target.value)}
+                            placeholder="Nombre y Apellido"
+                            style={{ width: '100%', padding: '16px', borderRadius: '15px', backgroundColor: BRAND.black, border: `1px solid ${BRAND.lightGray}`, color: 'white', outline: 'none', fontSize: '15px' }}
+                         />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                         <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase', letterSpacing: '2px' }}>PIN de 4 Dígitos</label>
+                         <input 
+                            type="password" 
+                            maxLength={4}
+                            value={newWaiterPin}
+                            onChange={(e) => setNewWaiterPin(e.target.value)}
+                            placeholder="****"
+                            style={{ width: '100%', padding: '16px', borderRadius: '15px', backgroundColor: BRAND.black, border: `1px solid ${BRAND.lightGray}`, color: 'white', outline: 'none', textAlign: 'center', fontSize: '20px', letterSpacing: '8px' }}
+                         />
+                      </div>
+                   </div>
+                   <div style={{ display: 'flex', gap: '15px' }}>
+                      <button 
+                         onClick={() => {
+                            if (newWaiterName && newWaiterPin.length === 4) {
+                               handleAddWaiter(newWaiterName, newWaiterPin)
+                               setNewWaiterName('')
+                               setNewWaiterPin('')
+                               setShowAddWaiterForm(false)
+                            } else {
+                               alert('Por favor completa el nombre y el PIN de 4 dígitos.')
+                            }
+                         }}
+                         style={{ flex: 2, backgroundColor: BRAND.orange, color: 'white', border: 'none', padding: '18px', borderRadius: '15px', fontWeight: '900', cursor: 'pointer', transition: 'all 0.3s' }}
+                         className="btn-hover btn-active"
+                      >GUARDAR MESERO</button>
+                      <button 
+                         onClick={() => setShowAddWaiterForm(false)}
+                         style={{ flex: 1, backgroundColor: 'transparent', color: 'rgba(255,255,255,0.4)', border: `1px solid ${BRAND.lightGray}`, padding: '18px', borderRadius: '15px', fontWeight: '900', cursor: 'pointer' }}
+                      >CANCELAR</button>
+                   </div>
+                </div>
+             )}
+
+             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
                 {waiters.map(w => (
-                   <div key={w.id} style={{ backgroundColor: BRAND.darkGray, padding: '30px', borderRadius: '35px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                   <div key={w.id} style={{ backgroundColor: BRAND.darkGray, padding: '30px', borderRadius: '35px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.3s' }} className="card-glow">
                       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                         <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: BRAND.black, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${BRAND.orange}40` }}>
-                            <Users size={22} color={BRAND.orange} />
+                         <div style={{ width: '55px', height: '55px', borderRadius: '50%', backgroundColor: BRAND.black, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `2px solid ${w.nombre === 'Admin' ? BRAND.gold : BRAND.orange}40` }}>
+                            <Users size={24} color={w.nombre === 'Admin' ? BRAND.gold : BRAND.orange} />
                          </div>
                          <div>
-                            <p style={{ margin: 0, fontWeight: '900', fontSize: '16px' }}>{w.nombre}</p>
-                            <p style={{ margin: 0, fontSize: '12px', color: BRAND.gold }}>PIN: {w.pin}</p>
+                            <p style={{ margin: 0, fontWeight: '900', fontSize: '17px', letterSpacing: '-0.5px' }}>{w.nombre}</p>
+                            <p style={{ margin: '2px 0 0', fontSize: '11px', color: BRAND.gold, fontWeight: '800', textTransform: 'uppercase' }}>{w.nombre === 'Admin' ? 'ACCESO TOTAL' : 'ACCESO COMANDAS'}</p>
                          </div>
                       </div>
-                      <button 
-                        onClick={() => { if(confirm(`¿Eliminar a ${w.nombre}?`)) handleDeleteWaiter(w.id) }}
-                        style={{ background: 'none', border: 'none', color: BRAND.red, cursor: 'pointer', opacity: 0.5 }}
-                      >
-                         <Trash2 size={20} />
-                      </button>
+                      {w.nombre !== 'Admin' && (
+                         <button 
+                           onClick={() => { if(confirm(`¿Eliminar a ${w.nombre}?`)) handleDeleteWaiter(w.id) }}
+                           style={{ background: 'rgba(255,255,255,0.03)', border: 'none', color: BRAND.red, cursor: 'pointer', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.5 }}
+                           className="btn-hover"
+                         >
+                            <Trash2 size={18} />
+                         </button>
+                      )}
                    </div>
                 ))}
              </div>
@@ -689,20 +749,26 @@ export default function AdminPage() {
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
-            { id: 'mapa', icon: <LayoutDashboard size={22} />, label: 'Mapa de Mesas' },
-            { id: 'ventas', icon: <TrendingUp size={22} />, label: 'Análisis Pro' },
-            { id: 'personal', icon: <Users size={22} />, label: 'Personal' },
-            { id: 'qr', icon: <QrCode size={22} />, label: 'Enlaces QR' },
-          ].map((item) => (
-            <button 
-              key={item.id} 
-              onClick={() => setActiveTab(item.id as any)}
-              className={`sidebar-item ${activeTab === item.id ? 'active' : ''}`}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '15px', padding: '18px 25px', borderRadius: '20px', border: 'none', background: activeTab === item.id ? `linear-gradient(to right, ${BRAND.orange}20, transparent)` : 'transparent', color: activeTab === item.id ? BRAND.orange : 'rgba(255,255,255,0.4)', fontWeight: '800', fontSize: '15px', cursor: 'pointer', transition: 'all 0.3s', textAlign: 'left', borderLeft: activeTab === item.id ? `4px solid ${BRAND.orange}` : '4px solid transparent' }}
-            >
-              {item.icon} {item.label}
-            </button>
-          ))}
+            { id: 'mapa', icon: <LayoutDashboard size={22} />, label: 'Mapa de Mesas', role: 'all' },
+            { id: 'ventas', icon: <TrendingUp size={22} />, label: 'Análisis Pro', role: 'admin' },
+            { id: 'personal', icon: <Users size={22} />, label: 'Personal', role: 'admin' },
+            { id: 'qr', icon: <QrCode size={22} />, label: 'Enlaces QR', role: 'admin' },
+          ].map((item) => {
+            // Solo el usuario 'Admin' puede ver las pestañas administrativas
+            const isAdmin = currentWaiter?.nombre === 'Admin'
+            if (!isAdmin && item.role === 'admin') return null
+
+            return (
+              <button 
+                key={item.id} 
+                onClick={() => setActiveTab(item.id as any)}
+                className={`sidebar-item ${activeTab === item.id ? 'active' : ''}`}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '15px', padding: '18px 25px', borderRadius: '20px', border: 'none', background: activeTab === item.id ? `linear-gradient(to right, ${BRAND.orange}20, transparent)` : 'transparent', color: activeTab === item.id ? BRAND.orange : 'rgba(255,255,255,0.4)', fontWeight: '800', fontSize: '15px', cursor: 'pointer', transition: 'all 0.3s', textAlign: 'left', borderLeft: activeTab === item.id ? `4px solid ${BRAND.orange}` : '4px solid transparent' }}
+              >
+                {item.icon} {item.label}
+              </button>
+            )
+          })}
         </nav>
 
         <div style={{ marginTop: 'auto' }}>
