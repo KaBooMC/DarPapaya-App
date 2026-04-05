@@ -28,7 +28,7 @@ export default function TableSelectorPage() {
         <h1 style={{ margin: 0, fontSize: '32px', fontWeight: '900', letterSpacing: '-1px' }}>BIENVENIDO A <span style={{ color: BRAND.orange }}>DAR</span>PAPAYA</h1>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px' }}>
           <MapPin size={16} color={BRAND.orange} />
-          <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Armenia, Quindío</p>
+          <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Arganzuela, Madrid</p>
         </div>
       </header>
 
