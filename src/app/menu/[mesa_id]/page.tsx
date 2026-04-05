@@ -10,7 +10,7 @@ const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1544025162-d7669426594
 
 export default function MenuPage({ params }: { params: { mesa_id: string } }) {
   const { addItem, items, total, clearCart } = useCartStore()
-  const [activeTab, setActiveTab] = useState<string>('carnes')
+  const [activeTab, setActiveTab] = useState<string>('tipicos')
   const [selectedTerm, setSelectedTerm] = useState<Record<string, string>>({})
   const [showSuccess, setShowSuccess] = useState<string | null>(null)
   const [isOrdering, setIsOrdering] = useState(false)
@@ -314,7 +314,7 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
         </div>
         <div style={{ background: `linear-gradient(to right, ${BRAND.darkGray}, ${BRAND.black})`, padding: '8px 15px', borderRadius: '12px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', alignItems: 'center', gap: '8px' }}>
           <ShoppingBag size={18} color={BRAND.orange} />
-          <span style={{ fontWeight: '900', fontSize: '15px', color: BRAND.white }}>${(total() + pendingTotal).toLocaleString()}</span>
+          <span style={{ fontWeight: '900', fontSize: '15px', color: BRAND.white }}>{(total() + pendingTotal).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}</span>
         </div>
       </header>
 
@@ -324,12 +324,11 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
            div::-webkit-scrollbar { display: none; }
         `}} />
         {[
-          { id: 'carnes', label: 'Carnes', icon: <UtensilsCrossed size={16} /> },
-          { id: 'pescados', label: 'Pescados', icon: <UtensilsCrossed size={16} /> },
-          { id: 'ceviches', label: 'Ceviches', icon: <UtensilsCrossed size={16} /> },
-          { id: 'entradas', label: 'Entradas', icon: <UtensilsCrossed size={16} /> },
-          { id: 'sopas', label: 'Sopas & Ens', icon: <UtensilsCrossed size={16} /> },
-          { id: 'wok', label: 'Wok', icon: <UtensilsCrossed size={16} /> },
+          { id: 'tipicos', label: 'Típicos', icon: <UtensilsCrossed size={16} /> },
+          { id: 'entrantes', label: 'Entrantes', icon: <UtensilsCrossed size={16} /> },
+          { id: 'sopas', label: 'Sopas', icon: <UtensilsCrossed size={16} /> },
+          { id: 'parrilla', label: 'Parrilla', icon: <UtensilsCrossed size={16} /> },
+          { id: 'postres', label: 'Postres', icon: <UtensilsCrossed size={16} /> },
           { id: 'bebidas', label: 'Bebidas', icon: <Beer size={16} /> }
         ].map(cat => (
           <button 
@@ -362,7 +361,7 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
                   }}
                 />
                 <div style={{ position: 'absolute', bottom: '15px', right: '15px', backgroundColor: 'rgba(0,0,0,0.8)', padding: '6px 12px', borderRadius: '10px', backdropFilter: 'blur(5px)', border: `1px solid ${BRAND.orange}40` }}>
-                  <span style={{ color: BRAND.gold, fontWeight: '900', fontSize: '16px' }}>${product.precio.toLocaleString()}</span>
+                  <span style={{ color: BRAND.gold, fontWeight: '900', fontSize: '16px' }}>{product.precio.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}</span>
                 </div>
                 {product.id.startsWith('c6') && (
                   <div style={{ position: 'absolute', top: '15px', left: '15px', background: `linear-gradient(45deg, ${BRAND.orange}, ${BRAND.gold})`, padding: '6px 12px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '5px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
@@ -379,7 +378,7 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
                 </div>
                 
                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                  {['carnes', 'pescados'].includes(product.categoria) && (
+                  {['parrilla', 'tipicos'].includes(product.categoria) && !product.nombre.toLowerCase().includes('hamburguesa') && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <p style={{ margin: 0, fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', color: BRAND.gold, letterSpacing: '1px' }}>Término Sugerido</p>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>

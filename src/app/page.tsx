@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { Utensils, LayoutDashboard, ChefHat, Beer, MapPin, ShieldCheck, Zap, ChevronRight, Star } from 'lucide-react'
+import { Utensils, LayoutDashboard, ChefHat, Beer, MapPin, ChevronRight, Star, Instagram } from 'lucide-react'
 
 const BRAND = {
   orange: '#D97706',
@@ -9,47 +9,48 @@ const BRAND = {
   darkGray: '#1A1A1A',
   lightGray: '#2A2A2A',
   red: '#991B1B',
-  white: '#FFFFFF'
+  white: '#FFFFFF',
+  success: '#10B981'
 }
 
 export default function Home() {
   const routes = [
     { 
-      name: 'Menú Cliente', 
+      name: 'Menú Digital', 
       href: '/menu/1', 
       icon: <Utensils size={32} />, 
-      desc: 'Experiencia de autoservicio para comensales.',
+      desc: 'Carta interactiva para comensales en Madrid.',
       color: BRAND.orange,
       badge: 'Live'
     },
     { 
-      name: 'Admin / Caja', 
+      name: 'Panel Admin', 
       href: '/admin', 
       icon: <LayoutDashboard size={32} />, 
-      desc: 'Gestión de mesas, pagos y reportes.',
+      desc: 'Gestión de mesas, pagos y analítica.',
       color: BRAND.gold,
-      badge: 'Secure'
+      badge: 'Control'
     },
     { 
-      name: 'Cocina', 
+      name: 'Cocina / KDS', 
       href: '/cocina', 
       icon: <ChefHat size={32} />, 
-      desc: 'Monitor de despacho y términos de parrilla.',
+      desc: 'Monitor de pedidos y tiempos de parrilla.',
       color: BRAND.red,
       badge: 'KDS'
     },
     { 
-      name: 'Bar', 
+      name: 'Bar / Bebidas', 
       href: '/bar', 
       icon: <Beer size={32} />, 
-      desc: 'Control de bebidas y preparación de bar.',
+      desc: 'Control de zumos y cervezas colombianas.',
       color: '#3B82F6',
       badge: 'Bar'
     },
   ]
 
   return (
-    <main style={{ backgroundColor: BRAND.black, minHeight: '100vh', color: BRAND.white, fontFamily: 'sans-serif', padding: '40px 20px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <main style={{ backgroundColor: BRAND.black, minHeight: '100vh', color: BRAND.white, fontFamily: 'sans-serif', padding: '60px 20px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       
       <style dangerouslySetInnerHTML={{ __html: `
         .grid-routes {
@@ -78,9 +79,8 @@ export default function Home() {
       <div className="glow-bg" style={{ top: '-10%', left: '-10%' }} />
       <div className="glow-bg" style={{ bottom: '-10%', right: '-10%', background: `radial-gradient(circle, ${BRAND.gold}05 0%, transparent 70%)` }} />
 
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '60px' }}>
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '60px', paddingTop: '40px' }}>
         
-        {/* LOGO Y TÍTULO CENTRAL */}
         <header style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
           <div style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '50%', background: `linear-gradient(135deg, ${BRAND.red}, ${BRAND.orange}, ${BRAND.gold})`, padding: '4px', boxShadow: `0 20px 50px ${BRAND.orange}30`, animation: 'float 4s ease-in-out infinite' }}>
             <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: BRAND.black, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -89,19 +89,22 @@ export default function Home() {
           </div>
           
           <div>
-            <h1 style={{ margin: 0, fontSize: '60px', fontWeight: '900', letterSpacing: '-3px', fontStyle: 'italic', textTransform: 'uppercase', lineHeight: 0.9, textShadow: '0px 4px 20px rgba(0,0,0,0.8), 0px 0px 10px rgba(0,0,0,0.5)' }}>
+            <h1 style={{ margin: 0, fontSize: '60px', fontWeight: '900', letterSpacing: '-3px', fontStyle: 'italic', textTransform: 'uppercase', lineHeight: 0.9 }}>
               DAR<span style={{ color: BRAND.orange }}>PAPAYA</span>
             </h1>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginTop: '10px' }}>
-              <div style={{ height: '1px', width: '40px', background: `linear-gradient(to right, transparent, ${BRAND.gold})` }} />
-              <p style={{ margin: 0, fontSize: '12px', color: BRAND.gold, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '5px', textShadow: '0 2px 5px rgba(0,0,0,1)' }}>LEGACY OS</p>
-              <div style={{ height: '1px', width: '40px', background: `linear-gradient(to left, transparent, ${BRAND.gold})` }} />
-            </div>
+            <p style={{ margin: '15px 0 0', fontSize: '14px', color: BRAND.gold, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '4px' }}>Madrid - Arganzuela</p>
           </div>
 
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
-            <MapPin size={12} color={BRAND.orange} />
-            <span style={{ fontSize: '10px', fontWeight: '900', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Armenia, Quindío</span>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.05)', padding: '10px 20px', borderRadius: '25px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <MapPin size={14} color={BRAND.orange} />
+              <span style={{ fontSize: '12px', fontWeight: '800', color: BRAND.white }}>C. de Juan Duque, 9, 28005 Madrid</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '5px' }}>
+               <span style={{ fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.4)' }}>+34 919 32 62 89</span>
+               <div style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)' }} />
+               <span style={{ fontSize: '11px', fontWeight: '700', color: BRAND.success }}>Abierto Ahora</span>
+            </div>
           </div>
         </header>
 
@@ -115,7 +118,6 @@ export default function Home() {
               className="btn-hover btn-active"
             >
               <div style={{ backgroundColor: BRAND.darkGray, borderRadius: '35px', padding: '35px', border: `1px solid ${BRAND.lightGray}`, position: 'relative', overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column', gap: '20px', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-                {/* DECORACIÓN INTERNA */}
                 <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '120px', height: '120px', background: `${route.color}10`, borderRadius: '50%', filter: 'blur(30px)' }} />
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -140,9 +142,13 @@ export default function Home() {
         </div>
 
         {/* FOOTER */}
-        <footer style={{ marginTop: '20px', textAlign: 'center' }}>
-          <p style={{ margin: 0, fontSize: '11px', fontWeight: '900', color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '2px' }}>
-            Desarrollado para el Éxito Gastronómico
+        <footer style={{ marginTop: '20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <Instagram size={20} color="rgba(255,255,255,0.3)" />
+            <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: '700', fontSize: '13px' }}>@darpapayamadrid</span>
+          </div>
+          <p style={{ margin: 0, fontSize: '11px', fontWeight: '900', color: 'rgba(255,255,255,0.1)', textTransform: 'uppercase', letterSpacing: '2px' }}>
+            International Gastronomy OS • Madrid Edition
           </p>
         </footer>
       </div>

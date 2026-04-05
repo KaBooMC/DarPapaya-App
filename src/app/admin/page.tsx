@@ -254,7 +254,7 @@ export default function AdminPage() {
           <section style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
               {[
-                { label: 'Ventas del Día', value: `$${stats.ventasHoy.toLocaleString()}`, color: BRAND.orange },
+                { label: 'Ventas del Día', value: `€${stats.ventasHoy.toLocaleString()}`, color: BRAND.orange },
                 { label: 'Pedidos Activos', value: stats.pedidosActivos, color: BRAND.gold },
                 { label: 'Mesas Libres', value: stats.mesasDisponibles, color: '#10B981' },
               ].map((s, i) => (
@@ -266,10 +266,10 @@ export default function AdminPage() {
             </div>
 
             <div style={{ backgroundColor: BRAND.darkGray, padding: '30px', borderRadius: '30px', border: `1px solid ${BRAND.lightGray}`, marginTop: '30px', maxWidth: '600px' }}>
-               <h3 style={{ margin: '0 0 15px', fontSize: '18px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase' }}>Configuración Nequi</h3>
-               <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', marginBottom: '20px' }}>URL de la imagen QR para los cobros por mesa.</p>
+               <h3 style={{ margin: '0 0 15px', fontSize: '18px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase' }}>Configuración Pago Digital / Bizum / IBAN</h3>
+               <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', marginBottom: '20px' }}>URL de la imagen QR (Bizum o Banco) para los cobros por mesa.</p>
                <div style={{ backgroundColor: BRAND.black, padding: '20px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}` }}>
-                  <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.orange, textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '8px' }}>URL de Imagen QR (Oficial)</label>
+                  <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.orange, textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '8px' }}>Imagen QR / Bizum (URL Oficial)</label>
                   <input 
                     type="text" 
                     value={nequiQRImage} 
@@ -506,7 +506,7 @@ export default function AdminPage() {
                       }}
                      >
                         <p style={{ margin: 0, fontWeight: '900', fontSize: '14px' }}>{p.nombre}</p>
-                        <p style={{ margin: 0, fontSize: '11px', color: BRAND.gold }}>${p.precio.toLocaleString()}</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: BRAND.gold }}>€{p.precio.toLocaleString()}</p>
                      </button>
                    ))}
                 </div>
@@ -537,7 +537,7 @@ export default function AdminPage() {
                   <div>
                     <p style={{ margin: 0, fontSize: '12px', fontWeight: '900', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '1px' }}>Subtotal</p>
                     <span style={{ fontSize: '24px', fontWeight: '900', color: BRAND.white }}>
-                      ${(tableTotals[activeTable] || 0).toLocaleString()}
+                      €{(tableTotals[activeTable] || 0).toLocaleString()}
                     </span>
                   </div>
                   
@@ -550,13 +550,13 @@ export default function AdminPage() {
                 <div style={{ backgroundColor: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '20px', border: `1px solid ${BRAND.lightGray}` }}>
                   <p style={{ margin: 0, fontSize: '12px', fontWeight: '900', color: BRAND.orange, textTransform: 'uppercase', letterSpacing: '1px' }}>Total a pagar</p>
                   <span style={{ fontSize: '40px', fontWeight: '900', color: BRAND.white, letterSpacing: '-1.5px' }}>
-                    ${(includeTip ? (tableTotals[activeTable] || 0) * 1.1 : (tableTotals[activeTable] || 0)).toLocaleString()}
+                    €{(includeTip ? (tableTotals[activeTable] || 0) * 1.1 : (tableTotals[activeTable] || 0)).toLocaleString()}
                   </span>
                 </div>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '15px' }}>
                   <button onClick={() => setShowNequi(true)} className="btn-hover btn-active" style={{ backgroundColor: BRAND.darkGray, color: BRAND.gold, border: `1px solid ${BRAND.gold}40`, padding: '22px', borderRadius: '22px', fontWeight: '900', fontSize: '13px', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                    <QrCode size={20} /> Nequi
+                    <QrCode size={20} /> Pago Digital
                   </button>
                   <button 
                     onClick={async () => {
