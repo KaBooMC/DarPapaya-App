@@ -308,27 +308,20 @@ export default function AdminPage() {
                   <h2 style={{ fontSize: '32px', fontWeight: '900', color: BRAND.white, marginBottom: '40px', letterSpacing: '-1px' }}>¿QUIÉN ESTÁ <span style={{ color: BRAND.orange }}>ATENDIENDO?</span></h2>
                   
                   {!selectedWaiterForLogin ? (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '25px', justifyContent: 'center' }}>
                           {waiters.map(w => (
                               <button 
                                   key={w.id}
                                   onClick={() => setSelectedWaiterForLogin(w)}
                                   className="card-glow"
-                                  style={{ padding: '40px 20px', backgroundColor: BRAND.darkGray, borderRadius: '30px', border: `1px solid ${BRAND.lightGray}`, color: 'white', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', transition: 'all 0.3s' }}
+                                  style={{ padding: '40px 20px', backgroundColor: BRAND.darkGray, borderRadius: '40px', border: `1px solid ${BRAND.lightGray}`, color: 'white', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', transition: 'all 0.3s' }}
                               >
-                                  <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: BRAND.orange + '20', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                      <Users size={30} color={BRAND.orange} />
+                                  <div style={{ width: '65px', height: '65px', borderRadius: '50%', backgroundColor: w.nombre === 'Admin' ? BRAND.gold + '10' : BRAND.orange + '10', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${w.nombre === 'Admin' ? BRAND.gold : BRAND.orange}30` }}>
+                                      <Users size={30} color={w.nombre === 'Admin' ? BRAND.gold : BRAND.orange} />
                                   </div>
-                                  <span style={{ fontWeight: '900', textTransform: 'uppercase', fontSize: '16px' }}>{w.nombre}</span>
+                                  <span style={{ fontWeight: '900', textTransform: 'uppercase', fontSize: '15px', letterSpacing: '1px' }}>{w.nombre}</span>
                               </button>
                           ))}
-                          <button 
-                             onClick={() => setActiveTab('personal')}
-                             style={{ padding: '40px 20px', backgroundColor: 'transparent', borderRadius: '30px', border: `2px dashed ${BRAND.lightGray}`, color: 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}
-                          >
-                              <Plus size={30} />
-                              <span style={{ fontWeight: '900', fontSize: '13px' }}>NUEVO MESERO</span>
-                          </button>
                       </div>
                   ) : (
                       <div style={{ maxWidth: '350px', margin: '0 auto', backgroundColor: BRAND.darkGray, padding: '40px', borderRadius: '40px', border: `1px solid ${BRAND.orange}60` }}>
