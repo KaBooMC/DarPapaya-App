@@ -82,7 +82,16 @@ export default function BarPage() {
              lower.includes('mandarina') || 
              lower.includes('bebida') ||
              lower.includes('limonada de coco') ||
-             lower.includes('limonada cerezada');
+             lower.includes('limonada cerezada') ||
+             lower.includes('cafe') ||
+             lower.includes('café') ||
+             lower.includes('tinto') ||
+             lower.includes('cortado') ||
+             lower.includes('espresso') ||
+             lower.includes('capuchino') ||
+             lower.includes('zumo') ||
+             lower.includes('agua') ||
+             lower.includes('gaseosa');
     }
 
     const fetchOrders = async () => {

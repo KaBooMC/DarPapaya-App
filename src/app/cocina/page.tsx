@@ -80,7 +80,22 @@ export default function CocinaPage() {
         const isBarItem = (notas: string) => {
           if (!notas) return false;
           const lower = notas.toLowerCase();
-          return lower.includes('cerveza') || lower.includes('jugo') || lower.includes('limonada') || lower.includes('mandarina') || lower.includes('bebida');
+          return lower.includes('cerveza') || 
+                 lower.includes('jugo') || 
+                 lower.includes('limonada') || 
+                 lower.includes('mandarina') || 
+                 lower.includes('bebida') ||
+                 lower.includes('limonada de coco') ||
+                 lower.includes('limonada cerezada') ||
+                 lower.includes('cafe') ||
+                 lower.includes('café') ||
+                 lower.includes('tinto') ||
+                 lower.includes('cortado') ||
+                 lower.includes('espresso') ||
+                 lower.includes('capuchino') ||
+                 lower.includes('zumo') ||
+                 lower.includes('agua') ||
+                 lower.includes('gaseosa');
         }
         setOrders((data || []).filter(o => !isBarItem(o.notas)))
       }
@@ -93,7 +108,22 @@ export default function CocinaPage() {
     const isBarItem = (notas: string) => {
       if (!notas) return false;
       const lower = notas.toLowerCase();
-      return lower.includes('cerveza') || lower.includes('jugo') || lower.includes('limonada') || lower.includes('mandarina') || lower.includes('bebida') || lower.includes('tinto') || lower.includes('agua') || lower.includes('gaseosa');
+      return lower.includes('cerveza') || 
+             lower.includes('jugo') || 
+             lower.includes('limonada') || 
+             lower.includes('mandarina') || 
+             lower.includes('bebida') ||
+             lower.includes('limonada de coco') ||
+             lower.includes('limonada cerezada') ||
+             lower.includes('cafe') ||
+             lower.includes('café') ||
+             lower.includes('tinto') ||
+             lower.includes('cortado') ||
+             lower.includes('espresso') ||
+             lower.includes('capuchino') ||
+             lower.includes('zumo') ||
+             lower.includes('agua') ||
+             lower.includes('gaseosa');
     }
 
     const channel = supabase

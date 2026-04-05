@@ -11,6 +11,7 @@
 DELETE FROM pedido_items;
 DELETE FROM pedidos;
 DELETE FROM productos;
+DELETE FROM meseros;
 
 -- Asegurar que los IDs sean UUIDs y que los totales acepten decimales (Euros)
 -- El esquema ya está preparado, pero aquí reafirmamos la estructura:
@@ -48,3 +49,18 @@ INSERT INTO productos (nombre, descripcion, precio, categoria, destino, img_url)
 ('Cerveza Colombiana', 'Club Colombia o Águila bien fría.', 4.50, 'bebidas', 'bar', 'https://lh3.googleusercontent.com/gps-cs-s/AHVAweo8y9JP8mJPYDTjhhQ9vIUVN40kOZ0SZ3jvuaMcTXRe6JmVFm1Eyr-IlfZpBDi6_bBGN5qfc5Ehfb3clC1pOyc-UeOv48U1_CSDF5h-4jIK10qmNDuQC7VpSo_K1EEAd-YUbzJWfdY28dnl=s1360-w1360-h1020-rw'),
 ('Salpicón de Frutas', 'Coctel de frutas tropicales picadas en zumo.', 4.50, 'bebidas', 'bar', 'https://lh3.googleusercontent.com/gps-cs-s/AHVAwerPSGgm-e8COSNnUoNVK0N7uV4VZSNEoS1x851ee8iIp5dVhq0eDdu7EKzFgPYRK-zVjdxSTQc9AeTgj4dtoI1fgxcxk-TiHVQEGnww3BfaIARbX1h2bEkeXUCcGbpPWppVaOy2=w640-h640-n-k-no'),
 ('Chupitos Especiales', 'Variedad de chupitos colombianos y clásicos.', 3.00, 'bebidas', 'bar', 'https://lh3.googleusercontent.com/gps-cs-s/AHVAwepBu0uE6ugtP4nalrHRciI5W5K6ZmUJneP5sT_4Tj-geiY2ead1DDA7uAsehwWDW_XY2MaMOHlmv6ophrctUvV-aiprN9o4WTsWXp2NvMYmHPva4PbTowCG5QVMXXEu6S-xoA7XUg=w640-h640-n-k-no');
+
+-- PRO: SISTEMA DE MESEROS Y SEGUIMIENTO
+CREATE TABLE IF NOT EXISTS meseros (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nombre TEXT NOT NULL UNIQUE,
+  pin TEXT DEFAULT '0000',
+  activo BOOLEAN DEFAULT true,
+  creado_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Vincular pedidos a meseros
+ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS mesero_nombre TEXT DEFAULT 'General';
+
+-- Insertar mesero inicial para pruebas
+INSERT INTO meseros (nombre, pin) VALUES ('Admin', '2026') ON CONFLICT DO NOTHING;

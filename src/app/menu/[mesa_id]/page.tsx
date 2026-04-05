@@ -328,9 +328,12 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
       <div style={{ position: 'sticky', top: '67px', zIndex: 90, backgroundColor: BRAND.black, padding: '15px 0', borderBottom: `1px solid ${BRAND.lightGray}` }}>
         <div style={{ position: 'relative', width: '100%' }}>
           {/* Indicador visual de 'Desliza para ver más' */}
-          <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '40px', background: `linear-gradient(to right, transparent, ${BRAND.black})`, zIndex: 2, pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', zIndex: 5, color: BRAND.orange, animation: 'bounceRight 1s infinite', pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: 'rgba(15,15,15,0.8)', padding: '4px 8px', borderRadius: '10px', border: `1px solid ${BRAND.orange}40` }}>
+            <span style={{ fontSize: '8px', fontWeight: '900' }}>MÁS</span>
+            <ChevronRight size={12} />
+          </div>
           
-          <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', padding: '0 20px' }}>
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', padding: '0 20px' }}>
             <style dangerouslySetInnerHTML={{ __html: `
                div::-webkit-scrollbar { display: none; }
             `}} />
