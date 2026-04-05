@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { Utensils, LayoutDashboard, ChefHat, Beer, MapPin, ChevronRight, Star, Instagram } from 'lucide-react'
+import { Utensils, LayoutDashboard, ChefHat, Beer, MapPin, ChevronRight, Star } from 'lucide-react'
 
 const BRAND = {
   orange: '#D97706',
@@ -143,10 +143,7 @@ export default function Home() {
 
         {/* FOOTER */}
         <footer style={{ marginTop: '20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <Instagram size={20} color="rgba(255,255,255,0.3)" />
-            <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: '700', fontSize: '13px' }}>@darpapayamadrid</span>
-          </div>
+          <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: '700', fontSize: '13px' }}>@darpapayamadrid</span>
           <p style={{ margin: 0, fontSize: '11px', fontWeight: '900', color: 'rgba(255,255,255,0.1)', textTransform: 'uppercase', letterSpacing: '2px' }}>
             International Gastronomy OS • Madrid Edition
           </p>
