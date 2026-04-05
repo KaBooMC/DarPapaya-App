@@ -25,6 +25,11 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
     MOCK_PRODUCTS.filter(p => p.categoria === activeTab),
   [activeTab])
 
+  // Resetear scroll al tope cuando cambias de categoría (Bug Fix)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeTab])
+
   // 0. Sincronización del total pendiente (Cuenta real de la mesa)
   useEffect(() => {
     const fetchPendingTotal = async () => {
@@ -81,7 +86,8 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
 
     if (isHalfPortion) {
       nombreFinal = `${selectedProduct.nombre} (1/2 Porción)`
-      precioFinal = selectedProduct.nombre.toLowerCase().includes('mariscos') ? 15900 : 8900
+      // Ajuste de precios de media porción a Euros (En lugar de 15,900 / 8,900 COP)
+      precioFinal = selectedProduct.nombre.toLowerCase().includes('mariscos') ? 9.50 : 6.50
     }
 
     if (customNote && customNote.trim() !== '') {
@@ -318,28 +324,35 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
         </div>
       </header>
 
-      {/* CATEGORÍAS - ESTILO PREMIUM (NUEVA BARRA SCROLLABLE) */}
-      <div style={{ position: 'sticky', top: '67px', zIndex: 90, backgroundColor: BRAND.black, padding: '15px 20px', display: 'flex', gap: '12px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
-        <style dangerouslySetInnerHTML={{ __html: `
-           div::-webkit-scrollbar { display: none; }
-        `}} />
-        {[
-          { id: 'tipicos', label: 'Típicos', icon: <UtensilsCrossed size={16} /> },
-          { id: 'entrantes', label: 'Entrantes', icon: <UtensilsCrossed size={16} /> },
-          { id: 'sopas', label: 'Sopas', icon: <UtensilsCrossed size={16} /> },
-          { id: 'parrilla', label: 'Parrilla', icon: <UtensilsCrossed size={16} /> },
-          { id: 'postres', label: 'Postres', icon: <UtensilsCrossed size={16} /> },
-          { id: 'bebidas', label: 'Bebidas', icon: <Beer size={16} /> }
-        ].map(cat => (
-          <button 
-            key={cat.id}
-            onClick={() => setActiveTab(cat.id)}
-            style={{ flexShrink: 0, padding: '12px 20px', borderRadius: '20px', border: 'none', cursor: 'pointer', fontWeight: '900', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', transition: 'all 0.3s', backgroundColor: activeTab === cat.id ? BRAND.orange : BRAND.darkGray, color: activeTab === cat.id ? BRAND.white : 'rgba(255,255,255,0.6)', boxShadow: activeTab === cat.id ? `0 8px 20px ${BRAND.orange}40` : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-            className="btn-active"
-          >
-            {cat.icon} {cat.label}
-          </button>
-        ))}
+      {/* CATEGORÍAS - ESTILO PREMIUM (CON INDICADOR DE SCROLL) */}
+      <div style={{ position: 'sticky', top: '67px', zIndex: 90, backgroundColor: BRAND.black, padding: '15px 0', borderBottom: `1px solid ${BRAND.lightGray}` }}>
+        <div style={{ position: 'relative', width: '100%' }}>
+          {/* Indicador visual de 'Desliza para ver más' */}
+          <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '40px', background: `linear-gradient(to right, transparent, ${BRAND.black})`, zIndex: 2, pointerEvents: 'none' }} />
+          
+          <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', padding: '0 20px' }}>
+            <style dangerouslySetInnerHTML={{ __html: `
+               div::-webkit-scrollbar { display: none; }
+            `}} />
+            {[
+              { id: 'tipicos', label: 'Típicos', icon: <UtensilsCrossed size={16} /> },
+              { id: 'entrantes', label: 'Entrantes', icon: <UtensilsCrossed size={16} /> },
+              { id: 'sopas', label: 'Sopas', icon: <UtensilsCrossed size={16} /> },
+              { id: 'parrilla', label: 'Parrilla', icon: <UtensilsCrossed size={16} /> },
+              { id: 'postres', label: 'Postres', icon: <UtensilsCrossed size={16} /> },
+              { id: 'bebidas', label: 'Bebidas', icon: <Beer size={16} /> }
+            ].map(cat => (
+              <button 
+                key={cat.id}
+                onClick={() => setActiveTab(cat.id)}
+                style={{ flexShrink: 0, padding: '12px 20px', borderRadius: '20px', border: 'none', cursor: 'pointer', fontWeight: '900', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', transition: 'all 0.3s', backgroundColor: activeTab === cat.id ? BRAND.orange : BRAND.darkGray, color: activeTab === cat.id ? BRAND.white : 'rgba(255,255,255,0.6)', boxShadow: activeTab === cat.id ? `0 8px 20px ${BRAND.orange}40` : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                className="btn-active"
+              >
+                {cat.icon} {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <main style={{ paddingBottom: '120px' }}>
@@ -456,7 +469,7 @@ export default function MenuPage({ params }: { params: { mesa_id: string } }) {
         <div style={{ maxWidth: '500px', margin: '0 auto', backgroundColor: 'rgba(26, 26, 26, 0.95)', backdropFilter: 'blur(20px)', padding: '15px 20px', borderRadius: '24px', border: `1px solid ${BRAND.lightGray}`, boxShadow: '0 20px 50px rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <p style={{ margin: 0, fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', color: BRAND.gold, letterSpacing: '1px' }}>Subtotal</p>
-            <p style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: BRAND.white }}>${total().toLocaleString()}</p>
+            <p style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: BRAND.white }}>€{total().toLocaleString()}</p>
           </div>
           <button 
             onClick={handleSendOrder}

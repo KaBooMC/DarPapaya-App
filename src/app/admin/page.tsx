@@ -431,7 +431,7 @@ export default function AdminPage() {
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px' }}>
               <MapPin size={16} color={BRAND.orange} />
-              <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Av. Centenario, Armenia, Quindío</p>
+              <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>C. de Juan Duque, 9, Arganzuela, 28005 Madrid</p>
             </div>
           </div>
         </header>
@@ -605,7 +605,7 @@ export default function AdminPage() {
                        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                           <p style={{ margin: 0, fontSize: '12px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Total a Cobrar</p>
                           <p style={{ margin: '5px 0 0', fontSize: '56px', fontWeight: '900', color: BRAND.white, letterSpacing: '-2px' }}>
-                            ${(includeTip ? (tableTotals[activeTable] || 0) * 1.1 : (tableTotals[activeTable] || 0)).toLocaleString()}
+                            €{(includeTip ? (tableTotals[activeTable] || 0) * 1.1 : (tableTotals[activeTable] || 0)).toLocaleString()}
                           </p>
                           <p style={{ margin: '10px 0 0', fontSize: '16px', color: 'rgba(255,255,255,0.4)', fontWeight: '700' }}>DarPapaya Restaurant System</p>
                        </div>
