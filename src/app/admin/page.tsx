@@ -308,12 +308,12 @@ export default function AdminPage() {
                   <h2 style={{ fontSize: '32px', fontWeight: '900', color: BRAND.white, marginBottom: '40px', letterSpacing: '-1px' }}>¿QUIÉN ESTÁ <span style={{ color: BRAND.orange }}>ATENDIENDO?</span></h2>
                   
                   {!selectedWaiterForLogin ? (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '25px', justifyContent: 'center' }}>
+                      <div className="waiter-login-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '25px', justifyContent: 'center' }}>
                           {waiters.map(w => (
                               <button 
                                   key={w.id}
                                   onClick={() => setSelectedWaiterForLogin(w)}
-                                  className="card-glow"
+                                  className="card-glow waiter-card"
                                   style={{ padding: '40px 20px', backgroundColor: BRAND.darkGray, borderRadius: '40px', border: `1px solid ${BRAND.lightGray}`, color: 'white', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', transition: 'all 0.3s' }}
                               >
                                   <div style={{ width: '65px', height: '65px', borderRadius: '50%', backgroundColor: w.nombre === 'Admin' ? BRAND.gold + '10' : BRAND.orange + '10', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${w.nombre === 'Admin' ? BRAND.gold : BRAND.orange}30` }}>
@@ -351,12 +351,12 @@ export default function AdminPage() {
       case 'mapa':
         return (
           <section>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '35px' }}>
+            <div className="mapa-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '35px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: BRAND.orange, boxShadow: `0 0 15px ${BRAND.orange}` }} />
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900', textTransform: 'uppercase', color: BRAND.white, letterSpacing: '3px' }}>Mapa de Mesas</h3>
               </div>
-              <div style={{ display: 'flex', gap: '30px', backgroundColor: BRAND.darkGray, padding: '12px 25px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}` }}>
+              <div className="mapa-legend" style={{ display: 'flex', gap: '30px', backgroundColor: BRAND.darkGray, padding: '12px 25px', borderRadius: '15px', border: `1px solid ${BRAND.lightGray}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10B981' }} />
                   <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: '800' }}>DISPONIBLES ({stats.mesasDisponibles})</span>
@@ -368,7 +368,7 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '25px' }}>
+            <div className="tables-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '25px' }}>
               {tables.map(table => {
                 const isOccupied = occupiedTables.has(table)
                 return (
@@ -419,13 +419,13 @@ export default function AdminPage() {
         return (
           <section style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
             {/* KPI PRINCIPALES */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+            <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
               {[
                 { label: 'Ventas del Día', value: `€${stats.ventasHoy.toLocaleString()}`, color: BRAND.orange, icon: <TrendingUp /> },
                 { label: 'Pedidos Activos', value: stats.pedidosActivos, color: BRAND.gold, icon: <LayoutDashboard /> },
                 { label: 'Mesas Libres', value: stats.mesasDisponibles, color: '#10B981', icon: <MapPin /> },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: BRAND.darkGray, padding: '30px', borderRadius: '35px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div key={i} className="kpi-card" style={{ backgroundColor: BRAND.darkGray, padding: '30px', borderRadius: '35px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <p style={{ margin: 0, fontSize: '12px', fontWeight: '900', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '2px' }}>{s.label}</p>
                     <p style={{ margin: '10px 0 0', fontSize: '36px', fontWeight: '900', color: s.color, letterSpacing: '-1px' }}>{s.value}</p>
@@ -436,7 +436,7 @@ export default function AdminPage() {
             </div>
 
             {/* ANALÍTICA PRO */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '30px' }}>
+            <div className="analytics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '30px' }}>
                {/* TOP PLATOS */}
                <div style={{ backgroundColor: BRAND.darkGray, padding: '35px', borderRadius: '40px', border: `1px solid ${BRAND.lightGray}` }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
@@ -538,7 +538,7 @@ export default function AdminPage() {
                  <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '900', color: BRAND.orange }}>Lista de QRs Específicos</h3>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
+              <div className="qr-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
                 {tables.map(t => (
                   <div key={t} style={{ backgroundColor: BRAND.black, padding: '20px', borderRadius: '25px', border: `1px solid ${BRAND.lightGray}`, textAlign: 'center' }}>
                     <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '15px', marginBottom: '15px' }}>
@@ -599,7 +599,7 @@ export default function AdminPage() {
                          <Users size={20} color={BRAND.orange} />
                       </div>
                    </div>
-                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '25px', marginBottom: '30px' }}>
+                   <div className="waiter-form-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '25px', marginBottom: '30px' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                          <label style={{ fontSize: '10px', fontWeight: '900', color: BRAND.gold, textTransform: 'uppercase', letterSpacing: '2px' }}>Nombre del Mesero</label>
                          <input 
@@ -645,7 +645,7 @@ export default function AdminPage() {
                 </div>
              )}
 
-             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+             <div className="waiters-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
                 {waiters.map(w => (
                    <div key={w.id} style={{ backgroundColor: BRAND.darkGray, padding: '30px', borderRadius: '35px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.3s' }} className="card-glow">
                       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -679,51 +679,137 @@ export default function AdminPage() {
       
       <style dangerouslySetInnerHTML={{ __html: `
         .sidebar-item:hover { background: rgba(255,255,255,0.05); color: ${BRAND.orange}; }
-        .table-btn:hover { transform: translateY(-5px); border-color: ${BRAND.orange}60; }
+        .table-btn:hover { transform: translateY(-3px); border-color: ${BRAND.orange}60; }
         .table-btn:active { transform: scale(0.95); }
         .btn-hover:hover { opacity: 0.9; transform: scale(1.02); }
         .btn-active:active { transform: scale(0.98); }
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: ${BRAND.black}; }
-        ::-webkit-scrollbar-thumb { background: ${BRAND.lightGray}; borderRadius: 10px; }
+        ::-webkit-scrollbar-thumb { background: ${BRAND.lightGray}; border-radius: 10px; }
 
+        /* --- COMANDERA PRO LAYOUT --- */
+        .comandera-layout { flex-direction: row; }
+        .comandera-config { width: 380px; flex-shrink: 0; }
+
+        /* --- TABLET (768px - 1024px) --- */
         @media (max-width: 1024px) {
           .admin-layout { flex-direction: column !important; }
-          .admin-sidebar { 
-             width: 100% !important; 
-             height: auto !important; 
-             position: relative !important; 
-             padding: 20px !important;
-             border-right: none !important;
-             border-bottom: 1px solid ${BRAND.lightGray} !important;
-             gap: 20px !important;
+          .admin-sidebar {
+            width: 100% !important;
+            height: auto !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 500 !important;
+            padding: 15px 20px !important;
+            border-right: none !important;
+            border-bottom: 1px solid ${BRAND.lightGray} !important;
+            gap: 15px !important;
+            flex-direction: row !important;
+            align-items: center !important;
           }
           .admin-sidebar nav {
             flex-direction: row !important;
             overflow-x: auto !important;
-            padding-bottom: 10px !important;
+            scrollbar-width: none !important;
+            flex: 1 !important;
+            gap: 6px !important;
           }
+          .admin-sidebar nav::-webkit-scrollbar { display: none; }
           .admin-sidebar .sidebar-item {
-            padding: 10px 15px !important;
+            padding: 10px 16px !important;
             white-space: nowrap !important;
             border-left: none !important;
-            border-bottom: 3px solid transparent !important;
+            border-radius: 15px !important;
+            font-size: 13px !important;
           }
           .admin-sidebar .sidebar-item.active {
-            border-bottom-color: ${BRAND.orange} !important;
-            background: transparent !important;
+            background: ${BRAND.orange}20 !important;
+            color: ${BRAND.orange} !important;
           }
+          .sidebar-logout { display: none !important; }
           .admin-main { padding: 20px !important; }
-          .admin-header h2 { fontSize: 28px !important; }
-          .active-table-modal { 
-            position: fixed !important; 
-            inset: 0 !important; 
-            width: 100% !important; 
-            height: 100% !important; 
+          .admin-header { margin-bottom: 25px !important; }
+          .admin-header h2 { font-size: 26px !important; }
+          .admin-header .subtitle { display: none; }
+          .active-table-modal {
+            position: fixed !important;
+            inset: 0 !important;
+            right: 0 !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
             border-radius: 0 !important;
             z-index: 2000 !important;
+            padding: 25px !important;
           }
+          .tables-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important; gap: 15px !important; }
+          .table-btn { padding: 25px 10px !important; border-radius: 20px !important; }
+          .table-btn span:first-child { font-size: 32px !important; }
+          .kpi-grid { grid-template-columns: 1fr 1fr !important; gap: 15px !important; }
+          .kpi-card { padding: 20px !important; border-radius: 25px !important; }
+          .kpi-card p:last-child { font-size: 28px !important; }
+          .analytics-grid { grid-template-columns: 1fr !important; }
+          .qr-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important; }
+          .waiters-grid { grid-template-columns: 1fr !important; }
+          .waiter-login-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important; gap: 15px !important; }
+          .waiter-card { padding: 25px 15px !important; border-radius: 25px !important; }
+          .mapa-header { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+          .mapa-legend { padding: 10px 15px !important; gap: 15px !important; }
+          .comandera-layout { flex-direction: row !important; }
+          .comandera-config { width: 280px !important; padding: 25px !important; }
         }
+
+        /* --- MÓVIL (<= 640px) --- */
+        @media (max-width: 640px) {
+          .admin-sidebar { padding: 12px 15px !important; }
+          .admin-sidebar .sidebar-item {
+            padding: 8px 12px !important;
+            font-size: 12px !important;
+            gap: 6px !important;
+          }
+          .admin-sidebar .sidebar-item svg { width: 16px; height: 16px; }
+          .admin-main { padding: 15px !important; padding-bottom: 30px !important; }
+          .admin-header h2 { font-size: 22px !important; }
+          .tables-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 10px !important; }
+          .table-btn { padding: 18px 8px !important; border-radius: 18px !important; border-width: 1.5px !important; }
+          .table-btn span:first-child { font-size: 24px !important; letter-spacing: -1px !important; }
+          .table-btn .table-label { font-size: 9px !important; letter-spacing: 0.5px !important; }
+          .table-btn .time-badge { padding: 2px 6px !important; margin-top: 3px !important; }
+          .table-btn .time-badge span { font-size: 10px !important; }
+          .table-btn .occupied-dot { top: 8px !important; right: 8px !important; width: 6px !important; height: 6px !important; }
+          .kpi-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .kpi-card { padding: 18px !important; border-radius: 20px !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; }
+          .kpi-card p:last-child { font-size: 26px !important; margin-top: 5px !important; }
+          .active-table-modal { padding: 20px 15px !important; }
+          .active-table-modal h3 { font-size: 24px !important; }
+          .qr-unique-card { flex-direction: column !important; align-items: center !important; text-align: center !important; }
+          .qr-unique-card div:first-child { width: 80px !important; height: 80px !important; }
+          .qr-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important; gap: 12px !important; }
+          .waiter-login-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+          .waiter-card { padding: 20px 10px !important; border-radius: 20px !important; gap: 10px !important; }
+          .waiter-card svg { width: 24px !important; height: 24px !important; }
+          .waiter-card span { font-size: 12px !important; }
+          .waiter-form-grid { grid-template-columns: 1fr !important; }
+          .mapa-header { margin-bottom: 20px !important; }
+          .mapa-legend { flex-direction: column !important; gap: 8px !important; align-items: flex-start !important; }
+          .order-add-btn { padding: 8px 14px !important; font-size: 11px !important; }
+          .modal-items-list { gap: 10px !important; }
+          .order-item { padding: 12px 15px !important; }
+          .order-item p { font-size: 14px !important; }
+          .payment-section { gap: 15px !important; }
+          .pay-btn { padding: 16px !important; font-size: 13px !important; }
+          .header-waiter-info { display: none !important; }
+          .comandera-layout { flex-direction: column !important; }
+          .comandera-config { width: 100% !important; padding: 20px !important; border-left: none !important; border-top: 1px solid rgba(255,255,255,0.1) !important; flex-shrink: 0 !important; }
+        }
+
+        /* --- MÓVIL pequeño (<= 390px) --- */
+        @media (max-width: 390px) {
+          .tables-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+          .table-btn { padding: 14px 5px !important; border-radius: 14px !important; }
+          .table-btn span:first-child { font-size: 20px !important; }
+          .admin-sidebar .sidebar-item { padding: 7px 9px !important; font-size: 11px !important; gap: 4px !important; }
         }
       `}} />
 
@@ -764,7 +850,7 @@ export default function AdminPage() {
           })}
         </nav>
 
-        <div style={{ marginTop: 'auto' }}>
+        <div className="sidebar-logout" style={{ marginTop: 'auto' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: '18px 25px', borderRadius: '20px', border: `1px solid ${BRAND.lightGray}`, background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.6)', fontWeight: '800', fontSize: '15px', cursor: 'pointer' }}>
               <LogOut size={22} /> Salir al Inicio
@@ -804,7 +890,7 @@ export default function AdminPage() {
         {renderContent()}
 
         {activeTable && (
-          <div style={{ position: 'fixed', right: '30px', top: '30px', bottom: '30px', width: '450px', backgroundColor: 'rgba(26, 26, 26, 0.95)', backdropFilter: 'blur(30px)', borderRadius: '40px', border: `1px solid ${BRAND.lightGray}`, boxShadow: '0 50px 100px rgba(0,0,0,0.9)', padding: '40px', display: 'flex', flexDirection: 'column', zIndex: 1000, animation: 'slideIn 0.4s ease-out' }}>
+          <div className="active-table-modal" style={{ position: 'fixed', right: '30px', top: '30px', bottom: '30px', width: '450px', backgroundColor: 'rgba(26, 26, 26, 0.95)', backdropFilter: 'blur(30px)', borderRadius: '40px', border: `1px solid ${BRAND.lightGray}`, boxShadow: '0 50px 100px rgba(0,0,0,0.9)', padding: '40px', display: 'flex', flexDirection: 'column', zIndex: 1000, animation: 'slideIn 0.4s ease-out' }}>
             <style dangerouslySetInnerHTML={{ __html: `
               @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
             `}} />
@@ -870,7 +956,7 @@ export default function AdminPage() {
                     </button>
                 </header>
 
-                <div style={{ flex: 1, display: 'flex', flexDirection: window.innerWidth > 768 ? 'row' : 'column', overflow: 'hidden' }}>
+                <div className="comandera-layout" style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
                     {/* Lista de Productos */}
                     <div style={{ flex: 1, overflowY: 'auto', padding: '30px', backgroundColor: 'rgba(255,255,255,0.02)' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '15px' }}>
@@ -895,7 +981,7 @@ export default function AdminPage() {
                     </div>
 
                     {/* Panel de Configuración Ítem */}
-                    <div style={{ width: window.innerWidth > 768 ? '400px' : '100%', backgroundColor: BRAND.darkGray, borderLeft: `1px solid ${BRAND.lightGray}`, padding: '40px', display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                    <div className="comandera-config" style={{ backgroundColor: BRAND.darkGray, borderLeft: `1px solid ${BRAND.lightGray}`, padding: '40px', display: 'flex', flexDirection: 'column', gap: '30px', overflowY: 'auto' }}>
                         {selectedManualProd ? (
                            <>
                              <div>
