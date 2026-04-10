@@ -980,59 +980,53 @@ export default function AdminPage() {
                         </div>
                     </div>
 
-                    {/* Panel de Configuración Ítem */}
+                    {selectedManualProd && (
                     <div className="comandera-config" style={{ backgroundColor: BRAND.darkGray, borderLeft: `1px solid ${BRAND.lightGray}`, padding: '40px', display: 'flex', flexDirection: 'column', gap: '30px', overflowY: 'auto' }}>
-                        {selectedManualProd ? (
-                           <>
-                             <div>
-                                <h4 style={{ margin: 0, fontSize: '10px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Producto Seleccionado</h4>
-                                <p style={{ margin: '5px 0 0', fontSize: '28px', fontWeight: '900' }}>{selectedManualProd.nombre}</p>
-                             </div>
+                        <>
+                          <div>
+                             <h4 style={{ margin: 0, fontSize: '10px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Producto Seleccionado</h4>
+                             <p style={{ margin: '5px 0 0', fontSize: '28px', fontWeight: '900' }}>{selectedManualProd.nombre}</p>
+                          </div>
 
-                             <div>
-                                <h4 style={{ margin: '0 0 10px', fontSize: '10px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Cantidad</h4>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                                   <button onClick={() => setManualQty(Math.max(1, manualQty-1))} style={{ width: '60px', height: '60px', borderRadius: '15px', backgroundColor: BRAND.black, color: 'white', border: `1px solid ${BRAND.lightGray}`, fontSize: '24px', fontWeight: '900' }}>-</button>
-                                   <span style={{ fontSize: '32px', fontWeight: '900', color: BRAND.white, width: '40px', textAlign: 'center' }}>{manualQty}</span>
-                                   <button onClick={() => setManualQty(manualQty+1)} style={{ width: '60px', height: '60px', borderRadius: '15px', backgroundColor: BRAND.black, color: 'white', border: `1px solid ${BRAND.lightGray}`, fontSize: '24px', fontWeight: '900' }}>+</button>
-                                </div>
+                          <div>
+                             <h4 style={{ margin: '0 0 10px', fontSize: '10px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Cantidad</h4>
+                             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                <button onClick={() => setManualQty(Math.max(1, manualQty-1))} style={{ width: '60px', height: '60px', borderRadius: '15px', backgroundColor: BRAND.black, color: 'white', border: `1px solid ${BRAND.lightGray}`, fontSize: '24px', fontWeight: '900', cursor: 'pointer' }}>-</button>
+                                <span style={{ fontSize: '32px', fontWeight: '900', color: BRAND.white, width: '40px', textAlign: 'center' }}>{manualQty}</span>
+                                <button onClick={() => setManualQty(manualQty+1)} style={{ width: '60px', height: '60px', borderRadius: '15px', backgroundColor: BRAND.black, color: 'white', border: `1px solid ${BRAND.lightGray}`, fontSize: '24px', fontWeight: '900', cursor: 'pointer' }}>+</button>
                              </div>
+                          </div>
 
-                             <div>
-                                <h4 style={{ margin: '0 0 10px', fontSize: '10px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Término (Opcional)</h4>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                                   {['Azul', 'Medio', '3/4', 'Bien Asada'].map(t => (
-                                      <button 
-                                        key={t} 
-                                        onClick={() => setManualTermino(t)}
-                                        style={{ padding: '8px 15px', borderRadius: '10px', border: `1px solid ${manualTermino === t ? BRAND.orange : BRAND.lightGray}`, backgroundColor: manualTermino === t ? BRAND.orange + '20' : 'transparent', color: manualTermino === t ? BRAND.orange : 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: '900' }}
-                                      >{t}</button>
-                                   ))}
-                                </div>
+                          <div>
+                             <h4 style={{ margin: '0 0 10px', fontSize: '10px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Término (Opcional)</h4>
+                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                {['Azul', 'Medio', '3/4', 'Bien Asada'].map(t => (
+                                   <button 
+                                     key={t} 
+                                     onClick={() => setManualTermino(t)}
+                                     style={{ padding: '8px 15px', borderRadius: '10px', border: `1px solid ${manualTermino === t ? BRAND.orange : BRAND.lightGray}`, backgroundColor: manualTermino === t ? BRAND.orange + '20' : 'transparent', color: manualTermino === t ? BRAND.orange : 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: '900', cursor: 'pointer' }}
+                                   >{t}</button>
+                                ))}
                              </div>
+                          </div>
 
-                             <div>
-                                <h4 style={{ margin: '0 0 10px', fontSize: '10px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Observaciones</h4>
-                                <textarea 
-                                  value={manualNote}
-                                  onChange={(e) => setManualNote(e.target.value)}
-                                  placeholder="Ej: Sin cebolla, extra salsas..."
-                                  style={{ width: '100%', height: '80px', backgroundColor: BRAND.black, borderRadius: '15px', border: `1px solid ${BRAND.lightGray}`, color: 'white', padding: '15px', outline: 'none', resize: 'none', fontSize: '14px' }}
-                                />
-                             </div>
+                          <div>
+                             <h4 style={{ margin: '0 0 10px', fontSize: '10px', color: BRAND.orange, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px' }}>Observaciones</h4>
+                             <textarea 
+                               value={manualNote}
+                               onChange={(e) => setManualNote(e.target.value)}
+                               placeholder="Ej: Sin cebolla, extra salsas..."
+                               style={{ width: '100%', height: '80px', backgroundColor: BRAND.black, borderRadius: '15px', border: `1px solid ${BRAND.lightGray}`, color: 'white', padding: '15px', outline: 'none', resize: 'none', fontSize: '14px', boxSizing: 'border-box' }}
+                             />
+                          </div>
 
-                             <button 
-                                onClick={handleAddManualItem}
-                                style={{ width: '100%', padding: '25px', backgroundColor: BRAND.success, color: 'white', borderRadius: '25px', border: 'none', fontWeight: '900', fontSize: '16px', textTransform: 'uppercase', cursor: 'pointer', boxShadow: `0 10px 30px ${BRAND.success}40` }}
-                             >ENVIAR A PREPARACIÓN</button>
-                           </>
-                        ) : (
-                           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.2 }}>
-                              <Utensils size={60} />
-                              <p style={{ fontWeight: '900' }}>SELECCIONA UN PRODUCTO</p>
-                           </div>
-                        )}
+                          <button 
+                             onClick={handleAddManualItem}
+                             style={{ width: '100%', padding: '25px', backgroundColor: BRAND.success, color: 'white', borderRadius: '25px', border: 'none', fontWeight: '900', fontSize: '16px', textTransform: 'uppercase', cursor: 'pointer', boxShadow: `0 10px 30px ${BRAND.success}40` }}
+                          >ENVIAR A PREPARACIÓN</button>
+                        </>
                     </div>
+                    )}
                 </div>
               </div>
             )}
