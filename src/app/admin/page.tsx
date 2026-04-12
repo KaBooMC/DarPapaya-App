@@ -365,12 +365,17 @@ export default function AdminPage() {
                   <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: BRAND.orange }} />
                   <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: '800' }}>OCUPADAS ({stats.pedidosActivos})</span>
                 </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: BRAND.success, boxShadow: `0 0 8px ${BRAND.success}` }} />
+                  <span style={{ fontSize: '11px', color: BRAND.success, fontWeight: '800' }}>PEDIDO LISTO</span>
+                </div>
               </div>
             </div>
 
             <div className="tables-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '25px' }}>
               {tables.map(table => {
                 const isOccupied = occupiedTables.has(table)
+                const hasReadyItems = tableOrders[table]?.some((item: any) => item.estado === 'listo')
                 return (
                   <button
                     key={table}
@@ -379,8 +384,8 @@ export default function AdminPage() {
                     style={{ 
                       padding: '40px 20px', 
                       borderRadius: '35px', 
-                      border: `2px solid ${activeTable === table ? BRAND.orange : (isOccupied ? BRAND.orange + '40' : BRAND.lightGray)}`, 
-                      backgroundColor: activeTable === table ? `${BRAND.orange}15` : (isOccupied ? `${BRAND.orange}05` : BRAND.darkGray), 
+                      border: `2px solid ${activeTable === table ? BRAND.orange : (hasReadyItems ? BRAND.success : (isOccupied ? BRAND.orange + '40' : BRAND.lightGray))}`, 
+                      backgroundColor: activeTable === table ? `${BRAND.orange}15` : (hasReadyItems ? `${BRAND.success}15` : (isOccupied ? `${BRAND.orange}05` : BRAND.darkGray)), 
                       color: BRAND.white, 
                       cursor: 'pointer', 
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', 
@@ -388,25 +393,25 @@ export default function AdminPage() {
                       flexDirection: 'column', 
                       alignItems: 'center', 
                       gap: '12px',
-                      boxShadow: activeTable === table ? `0 20px 40px ${BRAND.orange}25` : '0 10px 20px rgba(0,0,0,0.1)',
+                      boxShadow: activeTable === table ? `0 20px 40px ${BRAND.orange}25` : (hasReadyItems ? `0 0 25px ${BRAND.success}40` : '0 10px 20px rgba(0,0,0,0.1)'),
                       position: 'relative'
                     }}
                   >
-                    <span style={{ fontSize: '42px', fontWeight: '900', color: isOccupied ? BRAND.orange : BRAND.white, letterSpacing: '-2px' }}>{table}</span>
+                    <span style={{ fontSize: '42px', fontWeight: '900', color: hasReadyItems ? BRAND.success : (isOccupied ? BRAND.orange : BRAND.white), letterSpacing: '-2px' }}>{table}</span>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <span style={{ fontSize: '11px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px', opacity: isOccupied ? 1 : 0.4, color: isOccupied ? BRAND.orange : 'white' }}>
-                        {isOccupied ? 'OCUPADA' : 'MESA'}
+                      <span className="table-label" style={{ fontSize: '11px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '2px', opacity: isOccupied ? 1 : 0.4, color: hasReadyItems ? BRAND.success : (isOccupied ? BRAND.orange : 'white'), textAlign: 'center', lineHeight: '1.2' }}>
+                        {hasReadyItems ? 'LISTO PARA\nSERVIR' : (isOccupied ? 'OCUPADA' : 'MESA')}
                       </span>
                       {isOccupied && tableEntryTimes[table] && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '5px', backgroundColor: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '8px' }}>
-                          <Clock size={10} color={BRAND.gold} />
-                          <span style={{ fontSize: '12px', fontWeight: '900', color: BRAND.gold }}>{formatElapsedTime(tableEntryTimes[table])}</span>
+                        <div className="time-badge" style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '5px', backgroundColor: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '8px' }}>
+                          <Clock size={10} color={hasReadyItems ? BRAND.success : BRAND.gold} />
+                          <span style={{ fontSize: '12px', fontWeight: '900', color: hasReadyItems ? BRAND.success : BRAND.gold }}>{formatElapsedTime(tableEntryTimes[table])}</span>
                         </div>
                       )}
                     </div>
                     {isOccupied && (
-                      <div style={{ position: 'absolute', top: '15px', right: '15px' }}>
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: BRAND.orange, boxShadow: `0 0 10px ${BRAND.orange}` }} />
+                      <div className="occupied-dot" style={{ position: 'absolute', top: '15px', right: '15px' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: hasReadyItems ? BRAND.success : BRAND.orange, boxShadow: `0 0 10px ${hasReadyItems ? BRAND.success : BRAND.orange}`, animation: hasReadyItems ? 'pulse 1.5s infinite' : 'none' }} />
                       </div>
                     )}
                   </button>
@@ -908,7 +913,7 @@ export default function AdminPage() {
               <button onClick={() => { setActiveTable(null); setShowNequi(false); setIncludeTip(false); }} style={{ background: BRAND.black, border: `1px solid ${BRAND.lightGray}`, color: 'white', cursor: 'pointer', width: '45px', height: '45px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>&times;</button>
             </div>
 
-            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <div className="modal-items-list" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <p style={{ margin: 0, fontSize: '11px', fontWeight: '900', color: BRAND.white, textTransform: 'uppercase' }}>Items de la Mesa</p>
                 <button 
@@ -927,7 +932,7 @@ export default function AdminPage() {
 
               {occupiedTables.has(activeTable) ? (
                 tableOrders[activeTable]?.map((item: any, i: number) => (
-                  <div key={i} style={{ backgroundColor: BRAND.black, padding: '15px 20px', borderRadius: '20px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div key={i} className="order-item" style={{ backgroundColor: BRAND.black, padding: '15px 20px', borderRadius: '20px', border: `1px solid ${BRAND.lightGray}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <p style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>{item.notas} <span style={{ color: BRAND.gold }}>x{item.cantidad}</span></p>
                       {item.termino && <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>{item.termino}</p>}
